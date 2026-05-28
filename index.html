@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Helpmultas — Central de Dados</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Central de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #07070d;
@@ -15,334 +15,125 @@
     --text2: #7777aa;
     --text3: #44445a;
     --accent: #6c63ff;
-    --accent2: #4ade80;
-    --accent3: #f59e0b;
-    --glow: rgba(108,99,255,0.15);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
-
-  /* GRID BG */
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
   body::before {
     content: '';
     position: fixed; inset: 0; z-index: 0;
     background-image:
-      linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(108,99,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,0.025) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none;
   }
 
-  /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    height: 64px; display: flex; align-items: center; padding: 0 40px;
-    background: rgba(7,7,13,0.8); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
-    color: var(--text); letter-spacing: -0.02em; flex: 1;
-  }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 32px; align-items: center; }
-  .nav-link { font-size: 13px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
-  .nav-link:hover { color: var(--text); }
-  .nav-btn {
-    padding: 9px 22px; background: var(--accent); border: none; border-radius: 8px;
-    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; text-decoration: none; transition: all 0.2s;
-    box-shadow: 0 0 20px rgba(108,99,255,0.3);
-  }
-  .nav-btn:hover { opacity: 0.85; box-shadow: 0 0 30px rgba(108,99,255,0.5); }
-
-  /* HERO */
-  .hero {
     position: relative; z-index: 1;
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 120px 40px 80px; text-align: center;
+    height: 56px; display: flex; align-items: center;
+    padding: 0 32px; border-bottom: 1px solid var(--border);
+    justify-content: space-between;
   }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 16px; border-radius: 100px;
-    border: 1px solid rgba(108,99,255,0.3);
-    background: rgba(108,99,255,0.08);
-    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent);
-    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px;
-    animation: fadeUp 0.6s ease both;
+  .nav-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; }
+  .nav-btn {
+    padding: 7px 18px; background: var(--accent); border: none; border-radius: 7px;
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; text-decoration: none; transition: opacity 0.2s;
   }
-  .hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .nav-btn:hover { opacity: 0.8; }
 
-  .hero-title {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(40px, 7vw, 80px); line-height: 1.05;
-    letter-spacing: -0.03em; margin-bottom: 24px;
-    animation: fadeUp 0.6s 0.1s ease both;
+  main {
+    position: relative; z-index: 1; flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
   }
-  .hero-title .line2 { color: var(--accent); }
+  .center {
+    text-align: center; max-width: 480px;
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-  .hero-sub {
-    font-size: clamp(15px, 2vw, 18px); color: var(--text2); line-height: 1.7;
-    max-width: 520px; margin: 0 auto 48px;
-    animation: fadeUp 0.6s 0.2s ease both;
+  .tag {
+    display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 4px 12px; border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 100px; background: rgba(108,99,255,0.06); margin-bottom: 28px;
+  }
+  .tag::before { content: '● '; font-size: 7px; animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  h1 {
+    font-size: clamp(32px, 6vw, 52px); font-weight: 300; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 16px; color: var(--text);
+  }
+  h1 strong { font-weight: 500; }
+
+  p {
+    font-size: 15px; color: var(--text2); line-height: 1.7;
+    margin-bottom: 40px;
   }
 
-  .hero-actions {
-    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
-    animation: fadeUp 0.6s 0.3s ease both;
-  }
-  .btn-primary {
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
     padding: 14px 32px; background: var(--accent); border: none; border-radius: 10px;
     color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
     cursor: pointer; text-decoration: none; transition: all 0.2s;
-    box-shadow: 0 0 30px rgba(108,99,255,0.35);
-    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 0 24px rgba(108,99,255,0.25);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(108,99,255,0.5); }
-  .btn-secondary {
-    padding: 14px 32px; background: transparent;
-    border: 1px solid var(--border2); border-radius: 10px;
-    color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 15px;
-    cursor: pointer; text-decoration: none; transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(108,99,255,0.4); }
+  .btn-arrow { font-size: 18px; transition: transform 0.2s; }
+  .btn:hover .btn-arrow { transform: translateX(4px); }
 
-  /* GLOW ORB */
-  .orb {
-    position: absolute; width: 600px; height: 600px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%);
-    pointer-events: none; top: 50%; left: 50%; transform: translate(-50%,-60%);
+  .meta {
+    margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);
+    display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
   }
+  .meta-item { text-align: center; }
+  .meta-num { font-family: 'DM Mono', monospace; font-size: 20px; color: var(--text); }
+  .meta-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
 
-  /* STATS */
-  .stats {
-    display: flex; gap: 48px; justify-content: center; flex-wrap: wrap;
-    margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--border);
-    animation: fadeUp 0.6s 0.4s ease both;
-  }
-  .stat { text-align: center; }
-  .stat-num { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; color: var(--text); }
-  .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
-
-  /* FEATURES */
-  .features { position: relative; z-index: 1; padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent);
-    text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 16px;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 42px);
-    letter-spacing: -0.02em; margin-bottom: 48px; line-height: 1.1;
-  }
-  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-  .feature-card {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
-    padding: 28px; transition: all 0.3s; position: relative; overflow: hidden;
-  }
-  .feature-card::before {
-    content: ''; position: absolute; inset: 0; border-radius: 16px;
-    background: radial-gradient(circle at top left, var(--glow), transparent 60%);
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .feature-card:hover { border-color: rgba(108,99,255,0.3); transform: translateY(-4px); }
-  .feature-card:hover::before { opacity: 1; }
-  .feature-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; margin-bottom: 16px;
-  }
-  .feature-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 8px; }
-  .feature-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
-
-  /* PREVIEW */
-  .preview { position: relative; z-index: 1; padding: 40px 40px 80px; max-width: 1100px; margin: 0 auto; }
-  .preview-box {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
-    overflow: hidden; position: relative;
-  }
-  .preview-bar {
-    padding: 14px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px; background: var(--bg);
-  }
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .preview-content { padding: 24px; }
-  .mini-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  @media(max-width:600px) { .mini-cards { grid-template-columns: repeat(2,1fr); } }
-  .mini-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-  .mini-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
-  .mini-val { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; }
-  .mini-bar { height: 60px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: flex-end; gap: 4px; padding: 10px; overflow: hidden; }
-  .bar { border-radius: 3px 3px 0 0; flex: 1; background: rgba(108,99,255,0.4); transition: height 0.3s; }
-
-  /* CTA */
-  .cta { position: relative; z-index: 1; padding: 80px 40px; text-align: center; }
-  .cta-box {
-    max-width: 600px; margin: 0 auto; padding: 60px 40px;
-    background: var(--bg2); border: 1px solid rgba(108,99,255,0.2);
-    border-radius: 24px; position: relative; overflow: hidden;
-  }
-  .cta-box::before {
-    content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
-    width: 400px; height: 200px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(108,99,255,0.15), transparent 70%);
-  }
-  .cta-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 32px; margin-bottom: 16px; letter-spacing: -0.02em; position: relative; }
-  .cta-sub { color: var(--text2); font-size: 15px; margin-bottom: 32px; position: relative; }
-
-  /* FOOTER */
   footer {
-    position: relative; z-index: 1; padding: 32px 40px;
-    border-top: 1px solid var(--border); text-align: center;
-    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3);
+    position: relative; z-index: 1;
+    padding: 20px 32px; border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3);
+    display: flex; justify-content: space-between; align-items: center;
   }
-
-  @media(max-width: 600px) {
-    nav { padding: 0 20px; }
-    .nav-links .nav-link { display: none; }
-    .hero { padding: 100px 24px 60px; }
-    .features, .preview, .cta { padding-left: 24px; padding-right: 24px; }
-    .stats { gap: 32px; }
-  }
+  .status { display: flex; align-items: center; gap: 6px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: blink 3s infinite; }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-links">
-    <a href="#features" class="nav-link">Funcionalidades</a>
-    <a href="#preview" class="nav-link">Preview</a>
-    <a href="dashboard.html" class="nav-btn">Acessar Dashboard →</a>
-  </div>
+  <span class="nav-label">Central de Dados</span>
+  <a href="dashboard.html" class="nav-btn">Entrar</a>
 </nav>
 
-<section class="hero">
-  <div class="orb"></div>
-  <div class="hero-badge">Central de dados · Ao vivo</div>
-  <h1 class="hero-title">
-    Tráfego e funil<br>
-    <span class="line2">em tempo real</span>
-  </h1>
-  <p class="hero-sub">
-    Visualize investimento, leads, reuniões e vendas em um único lugar. 
-    Dados atualizados automaticamente a cada hora.
-  </p>
-  <div class="hero-actions">
-    <a href="dashboard.html" class="btn-primary">Acessar Dashboard →</a>
-    <a href="#features" class="btn-secondary">Ver funcionalidades</a>
-  </div>
-  <div class="stats">
-    <div class="stat"><div class="stat-num">1h</div><div class="stat-label">Atualização</div></div>
-    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Abas de dados</div></div>
-    <div class="stat"><div class="stat-num">24+</div><div class="stat-label">Métricas</div></div>
-    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Automatizado</div></div>
-  </div>
-</section>
-
-<section class="features" id="features">
-  <div class="section-label">Funcionalidades</div>
-  <h2 class="section-title">Tudo que você precisa<br>para tomar decisões</h2>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">Métricas de tráfego</div>
-      <div class="feature-desc">Investimento, CPM, CPC, CTR, impressões e cliques com filtros de período customizáveis.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎯</div>
-      <div class="feature-title">Funil completo</div>
-      <div class="feature-desc">Do lead até a venda — agendamentos, 1ª RM, 1ª RR, 2ª RM, 2ª RR com taxas de conversão em cada etapa.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Eventos da Meta</div>
-      <div class="feature-desc">Log completo de todos os eventos disparados — PageView, Lead, engajamentos e conversões por dia.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔄</div>
-      <div class="feature-title">Log de execuções</div>
-      <div class="feature-desc">Histórico completo de cada sincronização do n8n — linhas processadas, atualizadas e erros.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📅</div>
-      <div class="feature-title">Filtros de período</div>
-      <div class="feature-desc">Presets de 7, 15, 30 e 90 dias ou período customizado. Todos os gráficos atualizam instantaneamente.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔒</div>
-      <div class="feature-title">Acesso seguro</div>
-      <div class="feature-desc">Autenticação via Supabase Auth. Apenas usuários autorizados acessam os dados.</div>
+<main>
+  <div class="center">
+    <div class="tag">Atualizado a cada hora</div>
+    <h1>Tráfego, funil<br><strong>e resultados</strong></h1>
+    <p>Acompanhe investimento, leads, reuniões e vendas em um único painel. Dados sincronizados automaticamente da planilha e da Meta.</p>
+    <a href="dashboard.html" class="btn">
+      Acessar painel
+      <span class="btn-arrow">→</span>
+    </a>
+    <div class="meta">
+      <div class="meta-item"><div class="meta-num">24+</div><div class="meta-label">Métricas</div></div>
+      <div class="meta-item"><div class="meta-num">5</div><div class="meta-label">Abas</div></div>
+      <div class="meta-item"><div class="meta-num">1h</div><div class="meta-label">Atualização</div></div>
     </div>
   </div>
-</section>
-
-<section class="preview" id="preview">
-  <div class="section-label">Preview</div>
-  <h2 class="section-title" style="margin-bottom:32px">Interface limpa<br>e objetiva</h2>
-  <div class="preview-box">
-    <div class="preview-bar">
-      <div class="dot" style="background:#ff5f57"></div>
-      <div class="dot" style="background:#febc2e"></div>
-      <div class="dot" style="background:#28c840"></div>
-      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-left:8px">dashboard.html</span>
-    </div>
-    <div class="preview-content">
-      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-        <span style="padding:5px 14px;background:var(--accent);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace">Métricas</span>
-        <span style="padding:5px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)">Funil</span>
-        <span style="padding:5px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)">Tabela</span>
-        <span style="padding:5px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)">Eventos Meta</span>
-        <span style="padding:5px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)">Log n8n</span>
-      </div>
-      <div class="mini-cards">
-        <div class="mini-card"><div class="mini-label">Investimento</div><div class="mini-val" style="color:var(--accent)">R$ 1.881</div></div>
-        <div class="mini-card"><div class="mini-label">Leads</div><div class="mini-val" style="color:var(--accent3)">56</div></div>
-        <div class="mini-card"><div class="mini-label">Reuniões</div><div class="mini-val">28</div></div>
-        <div class="mini-card"><div class="mini-label">Vendas</div><div class="mini-val" style="color:var(--accent2)">0</div></div>
-      </div>
-      <div class="mini-bar" id="preview-bar"></div>
-    </div>
-  </div>
-</section>
-
-<section class="cta">
-  <div class="cta-box">
-    <div class="cta-title">Pronto para acessar?</div>
-    <div class="cta-sub">Entre com suas credenciais e visualize os dados em tempo real.</div>
-    <a href="dashboard.html" class="btn-primary" style="font-size:15px;padding:14px 36px">Acessar Dashboard →</a>
-  </div>
-</section>
+</main>
 
 <footer>
-  Central de dados de tráfego
+  <span>v1.0</span>
+  <div class="status"><div class="status-dot"></div><span>Sistema operacional</span></div>
 </footer>
 
-<script>
-// Anima as barras do preview
-const bars = [40, 65, 30, 80, 55, 90, 45, 70, 35, 60, 85, 50];
-const container = document.getElementById('preview-bar');
-bars.forEach(h => {
-  const b = document.createElement('div');
-  b.className = 'bar';
-  b.style.height = '4px';
-  container.appendChild(b);
-  setTimeout(() => { b.style.height = h + '%'; }, 200 + Math.random() * 400);
-});
-
-// Intersection Observer para animações
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.style.opacity = '1'; });
-}, { threshold: 0.1 });
-document.querySelectorAll('.feature-card').forEach(c => {
-  c.style.opacity = '0';
-  c.style.transition = 'opacity 0.5s ease, transform 0.3s ease, border-color 0.3s';
-  observer.observe(c);
-});
-</script>
 </body>
 </html>
