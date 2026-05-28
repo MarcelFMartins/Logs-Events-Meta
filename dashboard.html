@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="icone.ico">
+<link rel="icon" type="image/x-icon" href="icone.png">
 <title>Dashboard de Tráfego</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -187,6 +187,14 @@
   .log-status.parcial { background: rgba(245,158,11,0.1); color: var(--accent3); }
   .log-details { color: var(--text3); font-size: 11px; flex: 1; }
 
+
+  .score-bar { display:flex; gap:2px; align-items:center; }
+  .score-dot { width:8px; height:8px; border-radius:50%; background:var(--border2); }
+  .score-dot.on { background:var(--accent); }
+  .tag-enviado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(74,222,128,0.1); color:var(--accent2); }
+  .tag-ignorado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(244,63,94,0.1); color:var(--accent4); }
+  .tag-origem { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(108,99,255,0.1); color:var(--accent); }
+
   /* LOADING */
   .loading { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
   .empty { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
@@ -207,7 +215,7 @@
 <!-- CONFIG -->
 <script>
 const SUPABASE_URL = 'https://ctbaseoizcjrxthpjxgv.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0YmFzZW9pemNqcnh0aHBqeGd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDM1ODAsImV4cCI6MjA5NTUxOTU4MH0.2WOqgci6Mdqt2o5VBU3rP5vZZu39Wo-C5hw95zvXIuo'; // Supabase > Settings > API > anon public
+const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI'; // Supabase > Settings > API > anon public
 let SUPABASE_TOKEN = null;
 </script>
 
@@ -240,6 +248,7 @@ let SUPABASE_TOKEN = null;
       <button class="nav-tab" onclick="showPage('funil')">Funil</button>
       <button class="nav-tab" onclick="showPage('tabela')">Tabela</button>
       <button class="nav-tab" onclick="showPage('eventos')">Eventos Meta</button>
+      <button class="nav-tab" onclick="showPage('dataset')">Conversions API</button>
       <button class="nav-tab" onclick="showPage('log')">Log n8n</button>
     </div>
     <div class="topbar-right">
@@ -253,6 +262,10 @@ let SUPABASE_TOKEN = null;
     <span class="filter-label" style="color:var(--text3)">até</span>
     <input type="date" class="filter-input" id="date-to" />
     <button class="btn-filter" onclick="loadAll()">Aplicar</button>
+    <button class="btn-preset" onclick="setPreset(7)">7d</button>
+    <button class="btn-preset" onclick="setPreset(15)">15d</button>
+    <button class="btn-preset active" onclick="setPreset(30)">30d</button>
+    <button class="btn-preset" onclick="setPreset(90)">90d</button>
   </div>
 
   <div class="content">
@@ -363,6 +376,46 @@ let SUPABASE_TOKEN = null;
             </thead>
             <tbody id="eventos-body">
               <tr><td colspan="5" class="loading">carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONVERSIONS API LOG -->
+    <div id="page-dataset" class="page">
+      <div class="cards-grid" id="dataset-cards">
+        <div class="loading">carregando...</div>
+      </div>
+      <div class="table-box">
+        <div class="table-header">
+          <div class="table-title">Últimos eventos transmitidos</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select id="dataset-filter-evento" onchange="filtrarDataset()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
+              <option value="">Todos eventos</option>
+            </select>
+            <select id="dataset-filter-resultado" onchange="filtrarDataset()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
+              <option value="">Todos status</option>
+              <option value="enviado">Enviado</option>
+              <option value="ignorado">Ignorado</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Evento</th>
+                <th>Origem</th>
+                <th>Contato</th>
+                <th>Resultado</th>
+                <th>Match Score</th>
+                <th>Detalhe</th>
+              </tr>
+            </thead>
+            <tbody id="dataset-body">
+              <tr><td colspan="7" class="loading">carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -484,6 +537,7 @@ async function loadAll() {
   renderFunil(data);
   loadLogs();
   loadEventos();
+  loadDataset();
 }
 
 // ─── CARDS ───────────────────────────────────────────────
