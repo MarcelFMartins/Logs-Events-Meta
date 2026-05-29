@@ -27,99 +27,46 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-  /* LOGIN */
-  #login-screen {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: var(--bg);
-  }
-  .login-box {
-    width: 360px; padding: 40px;
-    background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 16px;
-  }
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+  .login-box { width: 360px; padding: 40px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; }
   .login-logo { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 32px; }
   .login-title { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
   .login-sub { font-size: 13px; color: var(--text2); margin-bottom: 32px; }
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-family: var(--mono); }
-  .field input {
-    width: 100%; padding: 10px 14px; background: var(--bg3);
-    border: 1px solid var(--border2); border-radius: 8px;
-    color: var(--text); font-family: var(--sans); font-size: 14px; outline: none;
-    transition: border-color 0.2s;
-  }
+  .field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: var(--sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
   .field input:focus { border-color: var(--accent); }
-  .btn-login {
-    width: 100%; padding: 12px; background: var(--accent);
-    border: none; border-radius: 8px; color: #fff;
-    font-family: var(--sans); font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
-  }
+  .btn-login { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 8px; color: #fff; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
   .btn-login:hover { opacity: 0.85; }
   .login-error { color: var(--accent4); font-size: 12px; margin-top: 12px; display: none; }
 
-  /* APP */
   #app { display: none; }
-  .topbar {
-    height: 56px; background: var(--bg2); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; padding: 0 24px; gap: 16px;
-    position: sticky; top: 0; z-index: 100;
-  }
+  .topbar { height: 56px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 16px; position: sticky; top: 0; z-index: 100; }
   .topbar-logo { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
   .topbar-sep { width: 1px; height: 20px; background: var(--border2); }
-  .nav-tabs { display: flex; gap: 4px; flex: 1; }
-  .nav-tab {
-    padding: 6px 14px; border-radius: 6px; font-size: 13px;
-    color: var(--text2); cursor: pointer; transition: all 0.15s;
-    border: none; background: none; font-family: var(--sans);
-  }
+  .nav-tabs { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
+  .nav-tab { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; border: none; background: none; font-family: var(--sans); white-space: nowrap; }
   .nav-tab:hover { color: var(--text); background: var(--bg3); }
   .nav-tab.active { color: var(--text); background: var(--bg3); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .btn-logout {
-    padding: 6px 12px; background: none; border: 1px solid var(--border2);
-    border-radius: 6px; color: var(--text2); font-size: 12px;
-    cursor: pointer; font-family: var(--sans); transition: all 0.15s;
-  }
+  .btn-logout { padding: 6px 12px; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--sans); transition: all 0.15s; }
   .btn-logout:hover { border-color: var(--accent4); color: var(--accent4); }
 
-  /* FILTERS */
-  .filters {
-    padding: 16px 24px; background: var(--bg2); border-bottom: 1px solid var(--border);
-    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-  }
+  .filters { padding: 16px 24px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
   .filter-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; }
-  .filter-input {
-    padding: 7px 12px; background: var(--bg3); border: 1px solid var(--border2);
-    border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 12px;
-    outline: none; transition: border-color 0.2s;
-  }
+  .filter-input { padding: 7px 12px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 12px; outline: none; transition: border-color 0.2s; }
   .filter-input:focus { border-color: var(--accent); }
-  .btn-filter {
-    padding: 7px 16px; background: var(--accent); border: none; border-radius: 6px;
-    color: #fff; font-size: 12px; font-weight: 500; cursor: pointer;
-    font-family: var(--sans); transition: opacity 0.2s;
-  }
+  .btn-filter { padding: 7px 16px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; font-family: var(--sans); transition: opacity 0.2s; }
   .btn-filter:hover { opacity: 0.85; }
-  .btn-preset {
-    padding: 6px 12px; background: none; border: 1px solid var(--border2);
-    border-radius: 6px; color: var(--text2); font-size: 11px;
-    cursor: pointer; font-family: var(--mono); transition: all 0.15s;
-  }
+  .btn-preset { padding: 6px 12px; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); font-size: 11px; cursor: pointer; font-family: var(--mono); transition: all 0.15s; }
   .btn-preset:hover, .btn-preset.active { border-color: var(--accent); color: var(--accent); }
 
-  /* CONTENT */
   .content { padding: 24px; max-width: 1400px; margin: 0 auto; }
   .page { display: none; }
   .page.active { display: block; }
 
-  /* METRIC CARDS */
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px 18px;
-    transition: border-color 0.2s;
-  }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: border-color 0.2s; }
   .card:hover { border-color: var(--border2); }
   .card-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--mono); margin-bottom: 8px; }
   .card-value { font-size: 22px; font-weight: 500; font-family: var(--mono); line-height: 1; }
@@ -133,22 +80,14 @@
   .card.accent-red { border-color: rgba(244,63,94,0.15); }
   .card.accent-red .card-value { color: var(--accent4); }
 
-  /* CHARTS */
   .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
   @media(max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
-  .chart-box {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px;
-  }
+  .chart-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
   .chart-title { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--mono); margin-bottom: 16px; }
   .chart-wrap { position: relative; height: 200px; }
 
-  /* TABLE */
-  .table-box {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden; margin-bottom: 24px;
-  }
-  .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .table-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+  .table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .table-title { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--mono); }
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -159,24 +98,15 @@
   td.num { text-align: right; }
   td.highlight { color: var(--text); }
 
-  /* FUNIL */
   .funil-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 2px; margin-bottom: 24px; }
-  .funil-step {
-    background: var(--bg2); border: 1px solid var(--border);
-    padding: 16px; text-align: center; position: relative;
-  }
+  .funil-step { background: var(--bg2); border: 1px solid var(--border); padding: 16px; text-align: center; }
   .funil-step:first-child { border-radius: 10px 0 0 10px; }
   .funil-step:last-child { border-radius: 0 10px 10px 0; }
   .funil-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--mono); margin-bottom: 6px; }
   .funil-num { font-size: 24px; font-weight: 500; font-family: var(--mono); }
   .funil-pct { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-top: 4px; }
 
-  /* LOG */
-  .log-item {
-    padding: 12px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 12px;
-    transition: background 0.15s;
-  }
+  .log-item { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 12px; transition: background 0.15s; }
   .log-item:hover { background: var(--bg3); }
   .log-item:last-child { border-bottom: none; }
   .log-time { color: var(--text3); min-width: 140px; font-size: 11px; }
@@ -187,19 +117,19 @@
   .log-status.parcial { background: rgba(245,158,11,0.1); color: var(--accent3); }
   .log-details { color: var(--text3); font-size: 11px; flex: 1; }
 
-
   .score-bar { display:flex; gap:2px; align-items:center; }
   .score-dot { width:8px; height:8px; border-radius:50%; background:var(--border2); }
   .score-dot.on { background:var(--accent); }
   .tag-enviado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(74,222,128,0.1); color:var(--accent2); }
   .tag-ignorado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(244,63,94,0.1); color:var(--accent4); }
   .tag-origem { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(108,99,255,0.1); color:var(--accent); }
+  .tag-utm { padding:2px 8px; border-radius:4px; font-size:10px; background:rgba(245,158,11,0.1); color:var(--accent3); max-width:160px; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
 
-  /* LOADING */
+  .filter-select { padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font-size: 12px; font-family: var(--mono); outline: none; }
+
   .loading { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
   .empty { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
 
-  /* RESPONSIVE */
   @media(max-width: 600px) {
     .topbar { padding: 0 12px; }
     .content { padding: 12px; }
@@ -212,14 +142,12 @@
 </head>
 <body>
 
-<!-- CONFIG -->
 <script>
 const SUPABASE_URL = 'https://ctbaseoizcjrxthpjxgv.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0YmFzZW9pemNqcnh0aHBqeGd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDM1ODAsImV4cCI6MjA5NTUxOTU4MH0.2WOqgci6Mdqt2o5VBU3rP5vZZu39Wo-C5hw95zvXIuo'; // Supabase > Settings > API > anon public
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0YmFzZW9pemNqcnh0aHBqeGd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDM1ODAsImV4cCI6MjA5NTUxOTU4MH0.2WOqgci6Mdqt2o5VBU3rP5vZZu39Wo-C5hw95zvXIuo';
 let SUPABASE_TOKEN = null;
 </script>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">▸ Dashboard</div>
@@ -234,22 +162,21 @@ let SUPABASE_TOKEN = null;
       <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
     </div>
     <button class="btn-login" onclick="doLogin()">Entrar</button>
-    <div class="login-error" id="login-error">Usuário ou senha incorretos</div>
+    <div class="login-error" id="login-error">Email ou senha incorretos</div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">▸ Tráfego</div>
     <div class="topbar-sep"></div>
     <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showPage('metricas')">Métricas</button>
-      <button class="nav-tab" onclick="showPage('funil')">Funil</button>
-      <button class="nav-tab" onclick="showPage('tabela')">Tabela</button>
-      <button class="nav-tab" onclick="showPage('eventos')">Eventos Meta</button>
-      <button class="nav-tab" onclick="showPage('dataset')">Conversions API</button>
-      <button class="nav-tab" onclick="showPage('log')">Log n8n</button>
+      <button class="nav-tab active" onclick="showPage('metricas',this)">Métricas</button>
+      <button class="nav-tab" onclick="showPage('funil',this)">Funil</button>
+      <button class="nav-tab" onclick="showPage('tabela',this)">Tabela</button>
+      <button class="nav-tab" onclick="showPage('utm',this)">UTMs</button>
+      <button class="nav-tab" onclick="showPage('eventos',this)">Eventos Meta</button>
+      <button class="nav-tab" onclick="showPage('log',this)">Log n8n</button>
     </div>
     <div class="topbar-right">
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -262,44 +189,32 @@ let SUPABASE_TOKEN = null;
     <span class="filter-label" style="color:var(--text3)">até</span>
     <input type="date" class="filter-input" id="date-to" />
     <button class="btn-filter" onclick="loadAll()">Aplicar</button>
+    <button class="btn-preset" onclick="setPreset(7,this)">7d</button>
+    <button class="btn-preset" onclick="setPreset(15,this)">15d</button>
+    <button class="btn-preset active" onclick="setPreset(30,this)">30d</button>
+    <button class="btn-preset" onclick="setPreset(90,this)">90d</button>
   </div>
 
   <div class="content">
 
     <!-- MÉTRICAS -->
     <div id="page-metricas" class="page active">
-      <div class="cards-grid" id="cards-grid">
-        <div class="loading">carregando...</div>
-      </div>
+      <div class="cards-grid" id="cards-grid"><div class="loading">carregando...</div></div>
       <div class="charts-grid">
-        <div class="chart-box">
-          <div class="chart-title">Investimento diário</div>
-          <div class="chart-wrap"><canvas id="chart-invest" role="img" aria-label="Investimento diário"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">Leads por dia</div>
-          <div class="chart-wrap"><canvas id="chart-leads" role="img" aria-label="Leads por dia"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">CPL diário</div>
-          <div class="chart-wrap"><canvas id="chart-cpl" role="img" aria-label="CPL diário"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">Impressões e cliques</div>
-          <div class="chart-wrap"><canvas id="chart-imp" role="img" aria-label="Impressões e cliques"></canvas></div>
-        </div>
+        <div class="chart-box"><div class="chart-title">Investimento diário</div><div class="chart-wrap"><canvas id="chart-invest"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Leads por dia</div><div class="chart-wrap"><canvas id="chart-leads"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">CPL diário</div><div class="chart-wrap"><canvas id="chart-cpl"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Impressões e cliques</div><div class="chart-wrap"><canvas id="chart-imp"></canvas></div></div>
       </div>
     </div>
 
     <!-- FUNIL -->
     <div id="page-funil" class="page">
-      <div class="funil-grid" id="funil-grid">
-        <div class="loading">carregando...</div>
-      </div>
+      <div class="funil-grid" id="funil-grid"><div class="loading">carregando...</div></div>
       <div class="charts-grid">
-        <div class="chart-box" style="grid-column: 1/-1;">
-          <div class="chart-title">Evolução do funil ao longo do período</div>
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-funil" role="img" aria-label="Funil"></canvas></div>
+        <div class="chart-box" style="grid-column:1/-1">
+          <div class="chart-title">Evolução do funil</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-funil"></canvas></div>
         </div>
       </div>
     </div>
@@ -307,35 +222,70 @@ let SUPABASE_TOKEN = null;
     <!-- TABELA -->
     <div id="page-tabela" class="page">
       <div class="table-box">
+        <div class="table-header"><div class="table-title">Dados diários</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Data</th><th>Invest.</th><th>Impressões</th><th>Cliques</th><th>CTR</th>
+              <th>CPM</th><th>CPC</th><th>Leads</th><th>CPL</th><th>Agend.</th>
+              <th>1ª RM</th><th>1ª RR</th><th>2ª RM</th><th>2ª RR</th>
+              <th>Vendas</th><th>Faturamento</th><th>ROAS</th>
+            </tr></thead>
+            <tbody id="tabela-body"><tr><td colspan="17" class="loading">carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- UTMs -->
+    <div id="page-utm" class="page">
+      <div class="cards-grid" id="utm-cards"><div class="loading">carregando...</div></div>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-title">Leads por campanha (top 8)</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-campaign"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Leads por source</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-source"></canvas></div>
+        </div>
+      </div>
+      <!-- Agrupado por campanha -->
+      <div class="table-box">
         <div class="table-header">
-          <div class="table-title">Dados diários</div>
+          <div class="table-title">Por campanha</div>
+          <input type="text" id="utm-search-camp" placeholder="Filtrar campanha..." oninput="filtrarUTMCamp()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;width:200px">
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Invest.</th>
-                <th>Impressões</th>
-                <th>Cliques</th>
-                <th>CTR</th>
-                <th>CPM</th>
-                <th>CPC</th>
-                <th>Leads</th>
-                <th>CPL</th>
-                <th>Agend.</th>
-                <th>1ª RM</th>
-                <th>1ª RR</th>
-                <th>2ª RM</th>
-                <th>2ª RR</th>
-                <th>Vendas</th>
-                <th>Faturamento</th>
-                <th>ROAS</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-body">
-              <tr><td colspan="17" class="loading">carregando...</td></tr>
-            </tbody>
+            <thead><tr>
+              <th>Campanha</th><th>Source</th><th>Medium</th><th>Leads</th><th>% do total</th>
+            </tr></thead>
+            <tbody id="utm-camp-body"><tr><td colspan="5" class="loading">carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Lista individual -->
+      <div class="table-box">
+        <div class="table-header">
+          <div class="table-title">Leads individuais</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="utm-filter-camp" class="filter-select" onchange="filtrarUTMLeads()">
+              <option value="">Todas campanhas</option>
+            </select>
+            <select id="utm-filter-source" class="filter-select" onchange="filtrarUTMLeads()">
+              <option value="">Todos sources</option>
+            </select>
+            <input type="text" id="utm-search-lead" placeholder="Buscar nome..." oninput="filtrarUTMLeads()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;width:150px">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Data</th><th>Nome</th><th>Etapa</th>
+              <th>UTM Source</th><th>UTM Medium</th><th>UTM Campaign</th><th>UTM Content</th><th>UTM Term</th>
+            </tr></thead>
+            <tbody id="utm-leads-body"><tr><td colspan="8" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -343,76 +293,22 @@ let SUPABASE_TOKEN = null;
 
     <!-- EVENTOS META -->
     <div id="page-eventos" class="page">
-      <div class="cards-grid" id="eventos-cards">
-        <div class="loading">carregando...</div>
-      </div>
+      <div class="cards-grid" id="eventos-cards"><div class="loading">carregando...</div></div>
       <div class="charts-grid">
         <div class="chart-box" style="grid-column:1/-1">
           <div class="chart-title">Top eventos por volume</div>
-          <div class="chart-wrap" style="height:260px"><canvas id="chart-eventos-bar" role="img" aria-label="Eventos por volume"></canvas></div>
+          <div class="chart-wrap" style="height:260px"><canvas id="chart-eventos-bar"></canvas></div>
         </div>
       </div>
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Todos os eventos por dia</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="eventos-search" placeholder="Filtrar evento..." style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;width:180px" oninput="filtrarEventos()">
-          </div>
+          <input type="text" id="eventos-search" placeholder="Filtrar evento..." oninput="filtrarEventos()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;width:180px">
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Evento</th>
-                <th>Total</th>
-                <th>Integração</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="eventos-body">
-              <tr><td colspan="5" class="loading">carregando...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- CONVERSIONS API LOG -->
-    <div id="page-dataset" class="page">
-      <div class="cards-grid" id="dataset-cards">
-        <div class="loading">carregando...</div>
-      </div>
-      <div class="table-box">
-        <div class="table-header">
-          <div class="table-title">Últimos eventos transmitidos</div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <select id="dataset-filter-evento" onchange="filtrarDataset()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
-              <option value="">Todos eventos</option>
-            </select>
-            <select id="dataset-filter-resultado" onchange="filtrarDataset()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none">
-              <option value="">Todos status</option>
-              <option value="enviado">Enviado</option>
-              <option value="ignorado">Ignorado</option>
-            </select>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Horário</th>
-                <th>Evento</th>
-                <th>Origem</th>
-                <th>Contato</th>
-                <th>Resultado</th>
-                <th>Match Score</th>
-                <th>Detalhe</th>
-              </tr>
-            </thead>
-            <tbody id="dataset-body">
-              <tr><td colspan="7" class="loading">carregando...</td></tr>
-            </tbody>
+            <thead><tr><th>Data</th><th>Evento</th><th>Total</th><th>Integração</th><th>Status</th></tr></thead>
+            <tbody id="eventos-body"><tr><td colspan="5" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -421,12 +317,8 @@ let SUPABASE_TOKEN = null;
     <!-- LOG -->
     <div id="page-log" class="page">
       <div class="table-box">
-        <div class="table-header">
-          <div class="table-title">Execuções do n8n</div>
-        </div>
-        <div id="log-list">
-          <div class="loading">carregando...</div>
-        </div>
+        <div class="table-header"><div class="table-title">Execuções do n8n</div></div>
+        <div id="log-list"><div class="loading">carregando...</div></div>
       </div>
     </div>
 
@@ -434,13 +326,12 @@ let SUPABASE_TOKEN = null;
 </div>
 
 <script>
-// ─── AUTH (Supabase Auth) ────────────────────────────────
+// ─── AUTH ────────────────────────────────────────────────
 async function doLogin() {
   const email = document.getElementById('login-user').value.trim();
   const pass  = document.getElementById('login-pass').value;
   const err   = document.getElementById('login-error');
   err.style.display = 'none';
-
   try {
     const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
@@ -451,7 +342,6 @@ async function doLogin() {
     if (data.access_token) {
       SUPABASE_TOKEN = data.access_token;
       sessionStorage.setItem('sb_token', data.access_token);
-      sessionStorage.setItem('sb_refresh', data.refresh_token);
       showApp();
     } else {
       err.textContent = 'Email ou senha incorretos';
@@ -462,48 +352,37 @@ async function doLogin() {
     err.style.display = 'block';
   }
 }
-
 async function doLogout() {
   await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_TOKEN}` }
+    method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_TOKEN}` }
   });
-  sessionStorage.clear();
-  location.reload();
+  sessionStorage.clear(); location.reload();
 }
-
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   setPreset(30);
 }
-
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-// Restaura sessão existente
 const savedToken = sessionStorage.getItem('sb_token');
-if (savedToken) {
-  SUPABASE_TOKEN = savedToken;
-  showApp();
-}
+if (savedToken) { SUPABASE_TOKEN = savedToken; showApp(); }
 
-// ─── NAVIGATION ─────────────────────────────────────────
-function showPage(name) {
+// ─── NAVIGATION ──────────────────────────────────────────
+function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
 }
 
 // ─── DATE PRESETS ────────────────────────────────────────
-function setPreset(days) {
-  const to = new Date();
-  const from = new Date();
+function setPreset(days, el) {
+  const to = new Date(), from = new Date();
   from.setDate(from.getDate() - days + 1);
-  document.getElementById('date-to').value = to.toISOString().split('T')[0];
-  document.getElementById('date-from').value = from.toISOString().split('T')[0];
+  document.getElementById('date-to').value   = to.toISOString().slice(0,10);
+  document.getElementById('date-from').value = from.toISOString().slice(0,10);
   document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-  if (event && event.target) event.target.classList.add('active');
+  if (el) el.classList.add('active');
   loadAll();
 }
 
@@ -523,44 +402,26 @@ async function loadAll() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
-
   const params = `data=gte.${from}&data=lte.${to}&order=data.asc`;
   const data = await supaFetch('metricas_diarias', params);
-
-  renderCards(data);
-  renderCharts(data);
-  renderTabela(data);
-  renderFunil(data);
-  loadLogs();
-  loadEventos();
-  loadDataset();
+  renderCards(data); renderCharts(data); renderTabela(data); renderFunil(data);
+  loadLogs(); loadEventos(); loadUTMs();
 }
 
 // ─── CARDS ───────────────────────────────────────────────
 function renderCards(data) {
-  const tot = data.reduce((a, r) => ({
-    invest:     a.invest     + parseFloat(r.invest_total || 0),
-    impressoes: a.impressoes + (r.impressoes || 0),
-    cliques:    a.cliques    + (r.cliques || 0),
-    leads:      a.leads      + (r.leads_funil || 0),
-    agend:      a.agend      + (r.agendando || 0),
-    rm1:        a.rm1        + (r.primeira_rm || 0),
-    rr1:        a.rr1        + (r.total_primeira_rr || 0),
-    rm2:        a.rm2        + (r.segunda_rm || 0),
-    rr2:        a.rr2        + (r.segunda_rr_sql2 || 0),
-    vendas:     a.vendas     + (r.vendas || 0),
-    fat:        a.fat        + parseFloat(r.faturamento || 0),
-  }), { invest:0, impressoes:0, cliques:0, leads:0, agend:0, rm1:0, rr1:0, rm2:0, rr2:0, vendas:0, fat:0 });
-
-  const cpl   = tot.leads  > 0 ? tot.invest / tot.leads : 0;
-  const cac   = tot.vendas > 0 ? tot.invest / tot.vendas : 0;
-  const roas  = tot.invest > 0 ? tot.fat / tot.invest : 0;
-  const ctr   = tot.impressoes > 0 ? (tot.cliques / tot.impressoes * 100) : 0;
-
-  const fmt = (v, p=2) => v.toLocaleString('pt-BR', {minimumFractionDigits:p, maximumFractionDigits:p});
-  const fmtBRL = v => 'R$ ' + fmt(v);
-  const fmtN = v => v.toLocaleString('pt-BR');
-
+  const tot = data.reduce((a,r) => ({
+    invest: a.invest+parseFloat(r.invest_total||0), impressoes: a.impressoes+(r.impressoes||0),
+    cliques: a.cliques+(r.cliques||0), leads: a.leads+(r.leads_funil||0),
+    agend: a.agend+(r.agendando||0), rm1: a.rm1+(r.primeira_rm||0),
+    rr1: a.rr1+(r.total_primeira_rr||0), rm2: a.rm2+(r.segunda_rm||0),
+    rr2: a.rr2+(r.segunda_rr_sql2||0), vendas: a.vendas+(r.vendas||0),
+    fat: a.fat+parseFloat(r.faturamento||0)
+  }), {invest:0,impressoes:0,cliques:0,leads:0,agend:0,rm1:0,rr1:0,rm2:0,rr2:0,vendas:0,fat:0});
+  const cpl=tot.leads>0?tot.invest/tot.leads:0, cac=tot.vendas>0?tot.invest/tot.vendas:0;
+  const roas=tot.invest>0?tot.fat/tot.invest:0, ctr=tot.impressoes>0?(tot.cliques/tot.impressoes*100):0;
+  const fmt=(v,p=2)=>v.toLocaleString('pt-BR',{minimumFractionDigits:p,maximumFractionDigits:p});
+  const fmtBRL=v=>'R$ '+fmt(v), fmtN=v=>v.toLocaleString('pt-BR');
   document.getElementById('cards-grid').innerHTML = `
     <div class="card accent-purple"><div class="card-label">Investimento</div><div class="card-value">${fmtBRL(tot.invest)}</div></div>
     <div class="card"><div class="card-label">Impressões</div><div class="card-value">${fmtN(tot.impressoes)}</div></div>
@@ -573,62 +434,30 @@ function renderCards(data) {
     <div class="card"><div class="card-label">2ª RM</div><div class="card-value">${fmtN(tot.rm2)}</div></div>
     <div class="card"><div class="card-label">2ª RR</div><div class="card-value">${fmtN(tot.rr2)}</div></div>
     <div class="card accent-green"><div class="card-label">Vendas</div><div class="card-value">${fmtN(tot.vendas)}</div><div class="card-sub">CAC ${fmtBRL(cac)}</div></div>
-    <div class="card accent-green"><div class="card-label">Faturamento</div><div class="card-value">${fmtBRL(tot.fat)}</div><div class="card-sub">ROAS ${fmt(roas)}x</div></div>
-  `;
+    <div class="card accent-green"><div class="card-label">Faturamento</div><div class="card-value">${fmtBRL(tot.fat)}</div><div class="card-sub">ROAS ${fmt(roas)}x</div></div>`;
 }
 
 // ─── CHARTS ──────────────────────────────────────────────
-function destroyChart(id) {
-  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
-}
+function destroyChart(id) { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } }
 const COLORS = { purple:'#6c63ff', green:'#4ade80', amber:'#f59e0b', red:'#f43f5e', blue:'#38bdf8' };
+const baseOpts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}}, y:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}} } };
 
 function renderCharts(data) {
   const labels = data.map(r => r.data.slice(5));
-  const opts = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{ticks:{color:'#555570',font:{size:10}}, grid:{color:'rgba(255,255,255,0.03)'}}, y:{ticks:{color:'#555570',font:{size:10}}, grid:{color:'rgba(255,255,255,0.05)'}} } };
-
   destroyChart('invest');
-  chartInstances['invest'] = new Chart(document.getElementById('chart-invest'), {
-    type:'bar', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.invest_total||0)), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] },
-    options:{ ...opts, plugins:{...opts.plugins} }
-  });
-
+  chartInstances['invest'] = new Chart(document.getElementById('chart-invest'), { type:'bar', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.invest_total||0)), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] }, options:{...baseOpts} });
   destroyChart('leads');
-  chartInstances['leads'] = new Chart(document.getElementById('chart-leads'), {
-    type:'bar', data:{ labels, datasets:[{ data:data.map(r=>r.leads_funil||0), backgroundColor:'rgba(245,158,11,0.5)', borderColor:COLORS.amber, borderWidth:1 }] },
-    options:{ ...opts }
-  });
-
+  chartInstances['leads'] = new Chart(document.getElementById('chart-leads'), { type:'bar', data:{ labels, datasets:[{ data:data.map(r=>r.leads_funil||0), backgroundColor:'rgba(245,158,11,0.5)', borderColor:COLORS.amber, borderWidth:1 }] }, options:{...baseOpts} });
   destroyChart('cpl');
-  chartInstances['cpl'] = new Chart(document.getElementById('chart-cpl'), {
-    type:'line', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.cpl_funil||0)), borderColor:COLORS.red, backgroundColor:'rgba(244,63,94,0.08)', tension:0.4, pointRadius:3, pointBackgroundColor:COLORS.red }] },
-    options:{ ...opts }
-  });
-
+  chartInstances['cpl'] = new Chart(document.getElementById('chart-cpl'), { type:'line', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.cpl_funil||0)), borderColor:COLORS.red, backgroundColor:'rgba(244,63,94,0.08)', tension:0.4, pointRadius:3, pointBackgroundColor:COLORS.red }] }, options:{...baseOpts} });
   destroyChart('imp');
-  chartInstances['imp'] = new Chart(document.getElementById('chart-imp'), {
-    type:'line', data:{ labels, datasets:[
-      { label:'Impressões', data:data.map(r=>r.impressoes||0), borderColor:COLORS.blue, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y' },
-      { label:'Cliques',    data:data.map(r=>r.cliques||0),    borderColor:COLORS.green, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y1' }
-    ]},
-    options:{ ...opts, plugins:{ legend:{ display:true, labels:{color:'#8888aa',font:{size:10},boxWidth:10} } }, scales:{ ...opts.scales, y:{...opts.scales.y,position:'left'}, y1:{...opts.scales.y,position:'right',grid:{display:false}} } }
-  });
+  chartInstances['imp'] = new Chart(document.getElementById('chart-imp'), { type:'line', data:{ labels, datasets:[ { label:'Impressões', data:data.map(r=>r.impressoes||0), borderColor:COLORS.blue, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y' }, { label:'Cliques', data:data.map(r=>r.cliques||0), borderColor:COLORS.green, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y1' } ] }, options:{...baseOpts, plugins:{legend:{display:true,labels:{color:'#8888aa',font:{size:10},boxWidth:10}}}, scales:{...baseOpts.scales, y:{...baseOpts.scales.y,position:'left'}, y1:{...baseOpts.scales.y,position:'right',grid:{display:false}}}} });
 }
 
 // ─── FUNIL ───────────────────────────────────────────────
 function renderFunil(data) {
-  const tot = data.reduce((a,r)=>({
-    leads:  a.leads  + (r.leads_funil||0),
-    agend:  a.agend  + (r.agendando||0),
-    rm1:    a.rm1    + (r.primeira_rm||0),
-    rr1:    a.rr1    + (r.total_primeira_rr||0),
-    rm2:    a.rm2    + (r.segunda_rm||0),
-    rr2:    a.rr2    + (r.segunda_rr_sql2||0),
-    vendas: a.vendas + (r.vendas||0),
-  }), {leads:0,agend:0,rm1:0,rr1:0,rm2:0,rr2:0,vendas:0});
-
-  const pct = (n,d) => d>0 ? (n/d*100).toFixed(1)+'%' : '-';
-
+  const tot = data.reduce((a,r)=>({ leads:a.leads+(r.leads_funil||0), agend:a.agend+(r.agendando||0), rm1:a.rm1+(r.primeira_rm||0), rr1:a.rr1+(r.total_primeira_rr||0), rm2:a.rm2+(r.segunda_rm||0), rr2:a.rr2+(r.segunda_rr_sql2||0), vendas:a.vendas+(r.vendas||0) }), {leads:0,agend:0,rm1:0,rr1:0,rm2:0,rr2:0,vendas:0});
+  const pct=(n,d)=>d>0?(n/d*100).toFixed(1)+'%':'-';
   document.getElementById('funil-grid').innerHTML = `
     <div class="funil-step"><div class="funil-label">Leads</div><div class="funil-num" style="color:var(--accent)">${tot.leads}</div><div class="funil-pct">100%</div></div>
     <div class="funil-step"><div class="funil-label">Agend.</div><div class="funil-num">${tot.agend}</div><div class="funil-pct">${pct(tot.agend,tot.leads)}</div></div>
@@ -636,142 +465,175 @@ function renderFunil(data) {
     <div class="funil-step"><div class="funil-label">1ª RR</div><div class="funil-num">${tot.rr1}</div><div class="funil-pct">${pct(tot.rr1,tot.rm1)}</div></div>
     <div class="funil-step"><div class="funil-label">2ª RM</div><div class="funil-num">${tot.rm2}</div><div class="funil-pct">${pct(tot.rm2,tot.rr1)}</div></div>
     <div class="funil-step"><div class="funil-label">2ª RR</div><div class="funil-num">${tot.rr2}</div><div class="funil-pct">${pct(tot.rr2,tot.rm2)}</div></div>
-    <div class="funil-step"><div class="funil-label">Vendas</div><div class="funil-num" style="color:var(--accent2)">${tot.vendas}</div><div class="funil-pct">${pct(tot.vendas,tot.rr2)}</div></div>
-  `;
-
+    <div class="funil-step"><div class="funil-label">Vendas</div><div class="funil-num" style="color:var(--accent2)">${tot.vendas}</div><div class="funil-pct">${pct(tot.vendas,tot.rr2)}</div></div>`;
   destroyChart('funil');
   const labels = data.map(r=>r.data.slice(5));
-  chartInstances['funil'] = new Chart(document.getElementById('chart-funil'), {
-    type:'line',
-    data:{ labels, datasets:[
-      { label:'Leads',  data:data.map(r=>r.leads_funil||0),       borderColor:COLORS.purple, backgroundColor:'transparent', tension:0.4, pointRadius:2 },
-      { label:'Agend.', data:data.map(r=>r.agendando||0),          borderColor:COLORS.amber,  backgroundColor:'transparent', tension:0.4, pointRadius:2 },
-      { label:'1ª RM',  data:data.map(r=>r.primeira_rm||0),        borderColor:COLORS.blue,   backgroundColor:'transparent', tension:0.4, pointRadius:2 },
-      { label:'Vendas', data:data.map(r=>r.vendas||0),             borderColor:COLORS.green,  backgroundColor:'transparent', tension:0.4, pointRadius:2 },
-    ]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ display:true, labels:{color:'#8888aa',font:{size:11},boxWidth:10} } },
-      scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}}, y:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}} }
-    }
-  });
+  chartInstances['funil'] = new Chart(document.getElementById('chart-funil'), { type:'line', data:{ labels, datasets:[ { label:'Leads', data:data.map(r=>r.leads_funil||0), borderColor:COLORS.purple, backgroundColor:'transparent', tension:0.4, pointRadius:2 }, { label:'Agend.', data:data.map(r=>r.agendando||0), borderColor:COLORS.amber, backgroundColor:'transparent', tension:0.4, pointRadius:2 }, { label:'1ª RM', data:data.map(r=>r.primeira_rm||0), borderColor:COLORS.blue, backgroundColor:'transparent', tension:0.4, pointRadius:2 }, { label:'Vendas', data:data.map(r=>r.vendas||0), borderColor:COLORS.green, backgroundColor:'transparent', tension:0.4, pointRadius:2 } ] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true,labels:{color:'#8888aa',font:{size:11},boxWidth:10}}}, scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}}, y:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}} } } });
 }
 
 // ─── TABELA ──────────────────────────────────────────────
 function renderTabela(data) {
-  const fmt = (v,p=2) => parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:p,maximumFractionDigits:p});
-  const fmtN = v => (v||0).toLocaleString('pt-BR');
-  const rows = [...data].reverse().map(r => `
-    <tr>
-      <td class="highlight">${r.data}</td>
-      <td class="num">R$ ${fmt(r.invest_total)}</td>
-      <td class="num">${fmtN(r.impressoes)}</td>
-      <td class="num">${fmtN(r.cliques)}</td>
-      <td class="num">${fmt(parseFloat(r.ctr||0)*100)}%</td>
-      <td class="num">R$ ${fmt(r.cpm)}</td>
-      <td class="num">R$ ${fmt(r.cpc)}</td>
-      <td class="num highlight">${fmtN(r.leads_funil)}</td>
-      <td class="num">R$ ${fmt(r.cpl_funil)}</td>
-      <td class="num">${fmtN(r.agendando)}</td>
-      <td class="num">${fmtN(r.primeira_rm)}</td>
-      <td class="num">${fmtN(r.total_primeira_rr)}</td>
-      <td class="num">${fmtN(r.segunda_rm)}</td>
-      <td class="num">${fmtN(r.segunda_rr_sql2)}</td>
-      <td class="num highlight">${fmtN(r.vendas)}</td>
-      <td class="num">R$ ${fmt(r.faturamento)}</td>
-      <td class="num">${fmt(r.roas)}x</td>
-    </tr>`).join('');
+  const fmt=(v,p=2)=>parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:p,maximumFractionDigits:p});
+  const fmtN=v=>(v||0).toLocaleString('pt-BR');
+  const rows = [...data].reverse().map(r => `<tr>
+    <td class="highlight">${r.data}</td><td class="num">R$ ${fmt(r.invest_total)}</td>
+    <td class="num">${fmtN(r.impressoes)}</td><td class="num">${fmtN(r.cliques)}</td>
+    <td class="num">${fmt(parseFloat(r.ctr||0)*100)}%</td><td class="num">R$ ${fmt(r.cpm)}</td>
+    <td class="num">R$ ${fmt(r.cpc)}</td><td class="num highlight">${fmtN(r.leads_funil)}</td>
+    <td class="num">R$ ${fmt(r.cpl_funil)}</td><td class="num">${fmtN(r.agendando)}</td>
+    <td class="num">${fmtN(r.primeira_rm)}</td><td class="num">${fmtN(r.total_primeira_rr)}</td>
+    <td class="num">${fmtN(r.segunda_rm)}</td><td class="num">${fmtN(r.segunda_rr_sql2)}</td>
+    <td class="num highlight">${fmtN(r.vendas)}</td><td class="num">R$ ${fmt(r.faturamento)}</td>
+    <td class="num">${fmt(r.roas)}x</td></tr>`).join('');
   document.getElementById('tabela-body').innerHTML = rows || '<tr><td colspan="17" class="empty">Sem dados no período</td></tr>';
+}
+
+// ─── UTMs ────────────────────────────────────────────────
+let utmData = [];
+
+async function loadUTMs() {
+  const from = document.getElementById('date-from').value;
+  const to   = document.getElementById('date-to').value;
+  if (!from || !to) return;
+  const params = `data_entrada=gte.${from}T00:00:00&data_entrada=lte.${to}T23:59:59&order=data_entrada.desc&limit=1000`;
+  utmData = await supaFetch('leads_utm', params);
+  renderUTMs(utmData);
+}
+
+function renderUTMs(data) {
+  const total = data.length;
+  const comUTM = data.filter(d => d.utm_campaign).length;
+  const campanhas = [...new Set(data.map(d => d.utm_campaign).filter(Boolean))].length;
+  const sources   = [...new Set(data.map(d => d.utm_source).filter(Boolean))].length;
+
+  document.getElementById('utm-cards').innerHTML = `
+    <div class="card accent-purple"><div class="card-label">Total leads</div><div class="card-value">${total}</div></div>
+    <div class="card accent-amber"><div class="card-label">Com UTM</div><div class="card-value">${comUTM}</div><div class="card-sub">${total>0?((comUTM/total)*100).toFixed(0):0}% do total</div></div>
+    <div class="card"><div class="card-label">Campanhas</div><div class="card-value">${campanhas}</div></div>
+    <div class="card"><div class="card-label">Sources</div><div class="card-value">${sources}</div></div>`;
+
+  // Agrupado por campanha
+  const porCamp = {};
+  for (const d of data) {
+    const k = d.utm_campaign || '(sem campanha)';
+    if (!porCamp[k]) porCamp[k] = { leads:0, source: d.utm_source||'-', medium: d.utm_medium||'-' };
+    porCamp[k].leads++;
+  }
+  const campArr = Object.entries(porCamp).sort((a,b)=>b[1].leads-a[1].leads);
+
+  // Gráfico campanhas
+  const top8 = campArr.slice(0,8);
+  destroyChart('utm-campaign');
+  chartInstances['utm-campaign'] = new Chart(document.getElementById('chart-utm-campaign'), {
+    type:'bar',
+    data:{ labels: top8.map(([k])=>k.length>20?k.slice(0,20)+'…':k), datasets:[{ data:top8.map(([,v])=>v.leads), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] },
+    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
+  });
+
+  // Gráfico sources
+  const porSource = {};
+  for (const d of data) { const k=d.utm_source||'(direto)'; porSource[k]=(porSource[k]||0)+1; }
+  const srcArr = Object.entries(porSource).sort((a,b)=>b[1]-a[1]);
+  destroyChart('utm-source');
+  chartInstances['utm-source'] = new Chart(document.getElementById('chart-utm-source'), {
+    type:'doughnut',
+    data:{ labels: srcArr.map(([k])=>k), datasets:[{ data:srcArr.map(([,v])=>v), backgroundColor:['#6c63ff','#4ade80','#f59e0b','#f43f5e','#38bdf8','#a78bfa','#34d399','#fb923c'], borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'right', labels:{color:'#8888aa',font:{size:11},boxWidth:10} } } }
+  });
+
+  renderUTMCampTabela(campArr, total);
+  populateUTMFiltros(data);
+  renderUTMLeadsTabela(data);
+}
+
+function renderUTMCampTabela(campArr, total) {
+  document.getElementById('utm-camp-body').innerHTML = campArr.map(([k,v]) => `<tr>
+    <td class="highlight"><span class="tag-utm" title="${k}">${k}</span></td>
+    <td>${v.source}</td><td>${v.medium}</td>
+    <td class="num highlight">${v.leads}</td>
+    <td class="num">${total>0?((v.leads/total)*100).toFixed(1):0}%</td>
+  </tr>`).join('') || '<tr><td colspan="5" class="empty">Sem dados</td></tr>';
+}
+
+function filtrarUTMCamp() {
+  const q = document.getElementById('utm-search-camp').value.toLowerCase();
+  const porCamp = {};
+  for (const d of utmData) {
+    const k = d.utm_campaign || '(sem campanha)';
+    if (!k.toLowerCase().includes(q)) continue;
+    if (!porCamp[k]) porCamp[k] = { leads:0, source:d.utm_source||'-', medium:d.utm_medium||'-' };
+    porCamp[k].leads++;
+  }
+  renderUTMCampTabela(Object.entries(porCamp).sort((a,b)=>b[1].leads-a[1].leads), utmData.length);
+}
+
+function populateUTMFiltros(data) {
+  const camps   = [...new Set(data.map(d=>d.utm_campaign).filter(Boolean))].sort();
+  const sources = [...new Set(data.map(d=>d.utm_source).filter(Boolean))].sort();
+  document.getElementById('utm-filter-camp').innerHTML   = '<option value="">Todas campanhas</option>' + camps.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('utm-filter-source').innerHTML = '<option value="">Todos sources</option>'   + sources.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+
+function filtrarUTMLeads() {
+  const camp   = document.getElementById('utm-filter-camp').value;
+  const source = document.getElementById('utm-filter-source').value;
+  const q      = document.getElementById('utm-search-lead').value.toLowerCase();
+  let filtrado = utmData;
+  if (camp)   filtrado = filtrado.filter(d => d.utm_campaign === camp);
+  if (source) filtrado = filtrado.filter(d => d.utm_source === source);
+  if (q)      filtrado = filtrado.filter(d => (d.nome||'').toLowerCase().includes(q));
+  renderUTMLeadsTabela(filtrado);
+}
+
+function renderUTMLeadsTabela(data) {
+  const tag = v => v ? `<span class="tag-utm" title="${v}">${v.length>18?v.slice(0,18)+'…':v}</span>` : '<span style="color:var(--text3)">-</span>';
+  document.getElementById('utm-leads-body').innerHTML = data.slice(0,300).map(d => `<tr>
+    <td class="highlight">${d.data_entrada ? d.data_entrada.slice(0,10) : '-'}</td>
+    <td>${d.nome||'-'}</td>
+    <td style="color:var(--text2)">${d.status_funil||'-'}</td>
+    <td>${tag(d.utm_source)}</td>
+    <td>${tag(d.utm_medium)}</td>
+    <td>${tag(d.utm_campaign)}</td>
+    <td>${tag(d.utm_content)}</td>
+    <td>${tag(d.utm_term)}</td>
+  </tr>`).join('') || '<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
 }
 
 // ─── EVENTOS META ────────────────────────────────────────
 let eventosData = [];
-
 async function loadEventos() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
-
-  const params = `data_referencia=gte.${from}&data_referencia=lte.${to}&order=data_referencia.desc,total_eventos.desc`;
-  eventosData = await supaFetch('eventos_facebook', params);
+  eventosData = await supaFetch('eventos_facebook', `data_referencia=gte.${from}&data_referencia=lte.${to}&order=data_referencia.desc,total_eventos.desc`);
   renderEventos(eventosData);
 }
-
 function filtrarEventos() {
   const q = document.getElementById('eventos-search').value.toLowerCase();
-  const filtrado = eventosData.filter(e => e.evento.toLowerCase().includes(q));
-  renderEventosTabela(filtrado);
+  renderEventosTabela(eventosData.filter(e => e.evento.toLowerCase().includes(q)));
 }
-
 function renderEventos(data) {
-  // Agrupa por evento (soma total)
   const agregado = {};
-  for (const e of data) {
-    if (!agregado[e.evento]) agregado[e.evento] = 0;
-    agregado[e.evento] += (e.total_eventos || 0);
-  }
-
-  // Cards dos top 6
-  const top = Object.entries(agregado).sort((a,b) => b[1]-a[1]).slice(0,6);
+  for (const e of data) { agregado[e.evento]=(agregado[e.evento]||0)+(e.total_eventos||0); }
+  const top = Object.entries(agregado).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const nomes = { lead:'Leads', link_click:'Cliques', landing_page_view:'Landing Views', video_view:'Vídeos', page_engagement:'Engajamento', post_reaction:'Reações' };
-  document.getElementById('eventos-cards').innerHTML = top.map(([k,v]) => `
-    <div class="card accent-purple">
-      <div class="card-label">${nomes[k] || k.replace(/_/g,' ')}</div>
-      <div class="card-value" style="font-size:18px">${v.toLocaleString('pt-BR')}</div>
-    </div>`).join('');
-
-  // Gráfico bar horizontal top 10
-  const top10 = Object.entries(agregado).sort((a,b) => b[1]-a[1]).slice(0,10);
+  document.getElementById('eventos-cards').innerHTML = top.map(([k,v]) => `<div class="card accent-purple"><div class="card-label">${nomes[k]||k.replace(/_/g,' ')}</div><div class="card-value" style="font-size:18px">${v.toLocaleString('pt-BR')}</div></div>`).join('');
+  const top10 = Object.entries(agregado).sort((a,b)=>b[1]-a[1]).slice(0,10);
   destroyChart('eventos-bar');
-  const wrapH = Math.max(300, top10.length * 40 + 80);
-  document.getElementById('chart-eventos-bar').parentElement.style.height = wrapH + 'px';
-  chartInstances['eventos-bar'] = new Chart(document.getElementById('chart-eventos-bar'), {
-    type: 'bar',
-    data: {
-      labels: top10.map(([k]) => k.replace('onsite_conversion.','').replace('offsite_conversion.','').replace(/_/g,' ')),
-      datasets: [{ data: top10.map(([,v]) => v), backgroundColor: 'rgba(108,99,255,0.5)', borderColor: '#6c63ff', borderWidth: 1 }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color:'#555570', font:{size:10} }, grid: { color:'rgba(255,255,255,0.05)' } },
-        y: { ticks: { color:'#8888aa', font:{size:11} }, grid: { display:false } }
-      }
-    }
-  });
-
+  document.getElementById('chart-eventos-bar').parentElement.style.height = Math.max(300, top10.length*40+80)+'px';
+  chartInstances['eventos-bar'] = new Chart(document.getElementById('chart-eventos-bar'), { type:'bar', data:{ labels:top10.map(([k])=>k.replace('onsite_conversion.','').replace('offsite_conversion.','').replace(/_/g,' ')), datasets:[{ data:top10.map(([,v])=>v), backgroundColor:'rgba(108,99,255,0.5)', borderColor:'#6c63ff', borderWidth:1 }] }, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:11}},grid:{display:false}} } } });
   renderEventosTabela(data);
 }
-
 function renderEventosTabela(data) {
-  if (!data || data.length === 0) {
-    document.getElementById('eventos-body').innerHTML = '<tr><td colspan="5" class="empty">Sem eventos no período</td></tr>';
-    return;
-  }
-  document.getElementById('eventos-body').innerHTML = data.map(e => `
-    <tr>
-      <td class="highlight">${e.data_referencia}</td>
-      <td style="color:var(--text);font-size:11px">${e.evento}</td>
-      <td class="num highlight">${(e.total_eventos||0).toLocaleString('pt-BR')}</td>
-      <td style="color:var(--text3);font-size:11px">${e.integracao||'-'}</td>
-      <td><span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(74,222,128,0.1);color:var(--accent2)">${e.status||'ativo'}</span></td>
-    </tr>`).join('');
+  if (!data||data.length===0) { document.getElementById('eventos-body').innerHTML='<tr><td colspan="5" class="empty">Sem eventos no período</td></tr>'; return; }
+  document.getElementById('eventos-body').innerHTML = data.map(e=>`<tr><td class="highlight">${e.data_referencia}</td><td style="color:var(--text);font-size:11px">${e.evento}</td><td class="num highlight">${(e.total_eventos||0).toLocaleString('pt-BR')}</td><td style="color:var(--text3);font-size:11px">${e.integracao||'-'}</td><td><span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(74,222,128,0.1);color:var(--accent2)">${e.status||'ativo'}</span></td></tr>`).join('');
 }
 
+// ─── LOG ─────────────────────────────────────────────────
 async function loadLogs() {
   const logs = await supaFetch('logs_execucao', 'order=criado_em.desc&limit=100');
-  if (!logs || logs.length === 0) {
-    document.getElementById('log-list').innerHTML = '<div class="empty">Nenhuma execução registrada ainda.<br><br>Adicione o node de log no n8n para começar a registrar.</div>';
-    return;
-  }
-  document.getElementById('log-list').innerHTML = logs.map(l => `
-    <div class="log-item">
-      <div class="log-time">${new Date(l.criado_em).toLocaleString('pt-BR')}</div>
-      <div class="log-workflow">${l.workflow}</div>
-      <div class="log-status ${l.status}">${l.status}</div>
-      <div class="log-details">${l.linhas_processadas} processadas · ${l.linhas_inseridas} inseridas · ${l.linhas_atualizadas} atualizadas · ${l.erros} erros · ${l.duracao_ms}ms</div>
-    </div>`).join('');
+  if (!logs||logs.length===0) { document.getElementById('log-list').innerHTML='<div class="empty">Nenhuma execução registrada ainda.</div>'; return; }
+  document.getElementById('log-list').innerHTML = logs.map(l=>`<div class="log-item"><div class="log-time">${new Date(l.criado_em).toLocaleString('pt-BR')}</div><div class="log-workflow">${l.workflow}</div><div class="log-status ${l.status}">${l.status}</div><div class="log-details">${l.linhas_processadas} processadas · ${l.linhas_inseridas} inseridas · ${l.linhas_atualizadas} atualizadas · ${l.erros} erros · ${l.duracao_ms}ms</div></div>`).join('');
 }
 </script>
 </body>
