@@ -24,6 +24,16 @@
     --mono: 'DM Mono', monospace;
     --sans: 'DM Sans', sans-serif;
   }
+  body.light {
+    --bg: #f4f4f8;
+    --bg2: #ffffff;
+    --bg3: #ebebf2;
+    --border: rgba(0,0,0,0.06);
+    --border2: rgba(0,0,0,0.12);
+    --text: #111118;
+    --text2: #555570;
+    --text3: #9999bb;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
@@ -179,6 +189,8 @@ let SUPABASE_TOKEN = null;
       <button class="nav-tab" onclick="showPage('log',this)">Log n8n</button>
     </div>
     <div class="topbar-right">
+      <span class="user-email" id="user-email"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Alternar tema">🌙</button>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
     </div>
   </div>
@@ -317,6 +329,7 @@ let SUPABASE_TOKEN = null;
             <tbody id="utm-leads-body"><tr><td colspan="8" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
+        <div class="pagination" id="utm-leads-pagination"></div>
       </div>
     </div>
 
@@ -371,6 +384,7 @@ async function doLogin() {
     if (data.access_token) {
       SUPABASE_TOKEN = data.access_token;
       sessionStorage.setItem('sb_token', data.access_token);
+      sessionStorage.setItem('sb_email', data.user?.email || email);
       showApp();
     } else {
       err.textContent = 'Email ou senha incorretos';
@@ -390,11 +404,27 @@ async function doLogout() {
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  const email = sessionStorage.getItem('sb_email') || '';
+  document.getElementById('user-email').textContent = email;
+  // Restaura tema
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-btn').textContent = '☀️';
+  }
   setPreset(30);
+}
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 const savedToken = sessionStorage.getItem('sb_token');
 if (savedToken) { SUPABASE_TOKEN = savedToken; showApp(); }
+
+// Auto refresh
+setInterval(() => { loadAll(); }, 60 * 1000);
 
 // ─── NAVIGATION ──────────────────────────────────────────
 function showPage(name, el) {
@@ -713,6 +743,32 @@ function renderUTMLeadsTabela(data) {
     <td>${tag(d.utm_term)}</td>
   </tr>`;
   }).join('') || '<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
+
+  // Paginação
+  const pg = document.getElementById('utm-leads-pagination');
+  if (!pg) return;
+  if (totalPages <= 1) { pg.innerHTML = `<span class="pg-info">Total: ${total} leads</span>`; return; }
+
+  let btns = `<button class="pg-btn" onclick="utmGoPage(${utmLeadsPage-1})" ${utmLeadsPage===1?'disabled':''}>← Ant</button>`;
+  const range = 2;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= utmLeadsPage-range && i <= utmLeadsPage+range)) {
+      btns += `<button class="pg-btn ${i===utmLeadsPage?'active':''}" onclick="utmGoPage(${i})">${i}</button>`;
+    } else if (i === utmLeadsPage-range-1 || i === utmLeadsPage+range+1) {
+      btns += `<span style="color:var(--text3);padding:0 4px">…</span>`;
+    }
+  }
+  btns += `<button class="pg-btn" onclick="utmGoPage(${utmLeadsPage+1})" ${utmLeadsPage===totalPages?'disabled':''}>Próx →</button>`;
+  pg.innerHTML = btns + `<span class="pg-info">${start+1}–${Math.min(start+UTM_PAGE_SIZE,total)} de ${total} leads</span>`;
+}
+
+function utmGoPage(p) {
+  const total = utmLeadsFiltered.length;
+  const totalPages = Math.ceil(total / UTM_PAGE_SIZE);
+  if (p < 1 || p > totalPages) return;
+  utmLeadsPage = p;
+  renderUTMLeadsPage();
+  document.getElementById('utm-leads-body').closest('.table-box').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // ─── EVENTOS META ────────────────────────────────────────
@@ -751,8 +807,6 @@ async function loadLogs() {
   if (!logs||logs.length===0) { document.getElementById('log-list').innerHTML='<div class="empty">Nenhuma execução registrada ainda.</div>'; return; }
   document.getElementById('log-list').innerHTML = logs.map(l=>`<div class="log-item"><div class="log-time">${new Date(l.criado_em).toLocaleString('pt-BR')}</div><div class="log-workflow">${l.workflow}</div><div class="log-status ${l.status}">${l.status}</div><div class="log-details">${l.linhas_processadas} processadas · ${l.linhas_inseridas} inseridas · ${l.linhas_atualizadas} atualizadas · ${l.erros} erros · ${l.duracao_ms}ms</div></div>`).join('');
 }
-
-setInterval(() => { loadAll(); }, 60 * 1000);
 </script>
 </body>
 </html>
