@@ -548,7 +548,7 @@ function renderUTMs(data) {
 
 function renderUTMCampTabela(campArr, total) {
   document.getElementById('utm-camp-body').innerHTML = campArr.map(([k,v]) => `<tr>
-    <td class="highlight"><span class="tag-utm" title="${k}">${k}</span></td>
+    <td class="highlight" style="color:var(--accent3);max-width:400px;white-space:normal;word-break:break-word">${k}</td>
     <td>${v.source}</td><td>${v.medium}</td>
     <td class="num highlight">${v.leads}</td>
     <td class="num">${total>0?((v.leads/total)*100).toFixed(1):0}%</td>
