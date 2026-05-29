@@ -240,6 +240,21 @@ let SUPABASE_TOKEN = null;
     <!-- UTMs -->
     <div id="page-utm" class="page">
       <div class="cards-grid" id="utm-cards"><div class="loading">carregando...</div></div>
+      <!-- Cards top anúncio por tipo -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px" id="utm-tipo-cards"></div>
+
+      <!-- Gráficos franqueado vs parceiro -->
+      <div class="charts-grid" style="margin-bottom:24px">
+        <div class="chart-box">
+          <div class="chart-title">Top anúncios → Franqueados</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-franqueado"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Top anúncios → Parceiros</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-parceiro"></canvas></div>
+        </div>
+      </div>
+
       <div class="charts-grid">
         <div class="chart-box">
           <div class="chart-title">Leads por campanha (top 8)</div>
@@ -548,6 +563,7 @@ function renderUTMs(data) {
   });
 
   renderUTMCampTabela(campArr, total);
+  renderUTMTipoCharts(campArr, total);
   populateUTMFiltros(data);
   renderUTMLeadsTabela(data);
 }
@@ -561,6 +577,47 @@ function renderUTMCampTabela(campArr, total) {
     <td class="num" style="color:var(--accent)">${v.parceiros} <span style="font-size:10px;color:var(--text3)">${v.leads>0?((v.parceiros/v.leads)*100).toFixed(0):0}%</span></td>
     <td class="num">${total>0?((v.leads/total)*100).toFixed(1):0}%</td>
   </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
+}
+
+function renderUTMTipoCharts(campArr, total) {
+  // Top campanha franqueados
+  const topFranq = campArr.filter(([,v])=>v.franqueados>0).sort((a,b)=>b[1].franqueados-a[1].franqueados);
+  const topParc  = campArr.filter(([,v])=>v.parceiros>0).sort((a,b)=>b[1].parceiros-a[1].parceiros);
+
+  const topFranqNome = topFranq[0] ? topFranq[0][0] : '-';
+  const topFranqNum  = topFranq[0] ? topFranq[0][1].franqueados : 0;
+  const topParcNome  = topParc[0]  ? topParc[0][0]  : '-';
+  const topParcNum   = topParc[0]  ? topParc[0][1].parceiros  : 0;
+
+  document.getElementById('utm-tipo-cards').innerHTML = `
+    <div class="card accent-green">
+      <div class="card-label">🏆 Top anúncio → Franqueado</div>
+      <div class="card-value" style="font-size:14px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.4">${topFranqNome}</div>
+      <div class="card-sub" style="margin-top:8px">${topFranqNum} franqueados</div>
+    </div>
+    <div class="card accent-purple">
+      <div class="card-label">🏆 Top anúncio → Parceiro</div>
+      <div class="card-value" style="font-size:14px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.4">${topParcNome}</div>
+      <div class="card-sub" style="margin-top:8px">${topParcNum} parceiros</div>
+    </div>`;
+
+  // Gráfico franqueados top 8
+  const top8f = topFranq.slice(0,8);
+  destroyChart('utm-franqueado');
+  chartInstances['utm-franqueado'] = new Chart(document.getElementById('chart-utm-franqueado'), {
+    type:'bar',
+    data:{ labels: top8f.map(([k])=>k.length>22?k.slice(0,22)+'…':k), datasets:[{ data:top8f.map(([,v])=>v.franqueados), backgroundColor:'rgba(74,222,128,0.4)', borderColor:'#4ade80', borderWidth:1 }] },
+    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
+  });
+
+  // Gráfico parceiros top 8
+  const top8p = topParc.slice(0,8);
+  destroyChart('utm-parceiro');
+  chartInstances['utm-parceiro'] = new Chart(document.getElementById('chart-utm-parceiro'), {
+    type:'bar',
+    data:{ labels: top8p.map(([k])=>k.length>22?k.slice(0,22)+'…':k), datasets:[{ data:top8p.map(([,v])=>v.parceiros), backgroundColor:'rgba(108,99,255,0.4)', borderColor:'#6c63ff', borderWidth:1 }] },
+    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
+  });
 }
 
 function filtrarUTMCamp() {
@@ -596,16 +653,12 @@ function filtrarUTMLeads() {
 }
 
 function renderUTMLeadsTabela(data) {
-  const tag = v => v ? `<span style="color:var(--accent3);white-space:normal;word-break:break-word">${v}</span>` : '<span style="color:var(--text3)">-</span>';
+  const tag = v => v ? `<span class="tag-utm" title="${v}">${v.length>18?v.slice(0,18)+'…':v}</span>` : '<span style="color:var(--text3)">-</span>';
   document.getElementById('utm-leads-body').innerHTML = data.slice(0,300).map(d => {
-    const isParceiro = d.status_funil === 'Parceiro Help';
-    const tipoBadge = isParceiro
-      ? '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(108,99,255,0.15);color:var(--accent)">Parceiro</span>'
-      : '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(74,222,128,0.1);color:var(--accent2)">Franqueado</span>';
     return `<tr>
     <td class="highlight">${d.data_entrada ? d.data_entrada.slice(0,10) : '-'}</td>
     <td>${d.nome||'-'}</td>
-    <td>${tipoBadge}</td>
+    <td style="color:var(--text2)">${d.status_funil||'-'}</td>
     <td>${tag(d.utm_source)}</td>
     <td>${tag(d.utm_medium)}</td>
     <td>${tag(d.utm_campaign)}</td>
