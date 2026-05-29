@@ -751,6 +751,8 @@ async function loadLogs() {
   if (!logs||logs.length===0) { document.getElementById('log-list').innerHTML='<div class="empty">Nenhuma execução registrada ainda.</div>'; return; }
   document.getElementById('log-list').innerHTML = logs.map(l=>`<div class="log-item"><div class="log-time">${new Date(l.criado_em).toLocaleString('pt-BR')}</div><div class="log-workflow">${l.workflow}</div><div class="log-status ${l.status}">${l.status}</div><div class="log-details">${l.linhas_processadas} processadas · ${l.linhas_inseridas} inseridas · ${l.linhas_atualizadas} atualizadas · ${l.erros} erros · ${l.duracao_ms}ms</div></div>`).join('');
 }
+
+setInterval(() => { loadAll(); }, 60 * 1000);
 </script>
 </body>
 </html>
