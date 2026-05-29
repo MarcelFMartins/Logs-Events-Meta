@@ -9,44 +9,30 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #1a1a24;
-    --border: rgba(255,255,255,0.06);
-    --border2: rgba(255,255,255,0.12);
-    --text: #f0f0f5;
-    --text2: #8888aa;
-    --text3: #555570;
-    --accent: #6c63ff;
-    --accent2: #4ade80;
-    --accent3: #f59e0b;
-    --accent4: #f43f5e;
-    --mono: 'DM Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
+    --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f5; --text2: #8888aa; --text3: #555570;
+    --accent: #6c63ff; --accent2: #4ade80; --accent3: #f59e0b; --accent4: #f43f5e;
+    --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
   }
   body.light {
-    --bg: #f4f4f8;
-    --bg2: #ffffff;
-    --bg3: #ebebf2;
-    --border: rgba(0,0,0,0.06);
-    --border2: rgba(0,0,0,0.12);
-    --text: #111118;
-    --text2: #555570;
-    --text3: #9999bb;
+    --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
+    --border: rgba(0,0,0,0.06); --border2: rgba(0,0,0,0.12);
+    --text: #111118; --text2: #555570; --text3: #9999bb;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
   .login-box { width: 360px; padding: 40px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; }
   .login-logo { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 32px; }
   .login-title { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
   .login-sub { font-size: 13px; color: var(--text2); margin-bottom: 32px; }
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-family: var(--mono); }
-  .field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: var(--sans); font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
   .field input:focus { border-color: var(--accent); }
-  .btn-login { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 8px; color: #fff; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
+  .btn-login { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
   .btn-login:hover { opacity: 0.85; }
   .login-error { color: var(--accent4); font-size: 12px; margin-top: 12px; display: none; }
 
@@ -58,7 +44,10 @@
   .nav-tab { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; border: none; background: none; font-family: var(--sans); white-space: nowrap; }
   .nav-tab:hover { color: var(--text); background: var(--bg3); }
   .nav-tab.active { color: var(--text); background: var(--bg3); }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .user-email { font-size: 11px; color: var(--text3); font-family: var(--mono); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .theme-toggle { width: 34px; height: 34px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border2); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s; }
+  .theme-toggle:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: rotate(18deg); }
   .btn-logout { padding: 6px 12px; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--sans); transition: all 0.15s; }
   .btn-logout:hover { border-color: var(--accent4); color: var(--accent4); }
 
@@ -66,7 +55,7 @@
   .filter-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; }
   .filter-input { padding: 7px 12px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 12px; outline: none; transition: border-color 0.2s; }
   .filter-input:focus { border-color: var(--accent); }
-  .btn-filter { padding: 7px 16px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; font-family: var(--sans); transition: opacity 0.2s; }
+  .btn-filter { padding: 7px 16px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
   .btn-filter:hover { opacity: 0.85; }
   .btn-preset { padding: 6px 12px; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); font-size: 11px; cursor: pointer; font-family: var(--mono); transition: all 0.15s; }
   .btn-preset:hover, .btn-preset.active { border-color: var(--accent); color: var(--accent); }
@@ -127,15 +116,14 @@
   .log-status.parcial { background: rgba(245,158,11,0.1); color: var(--accent3); }
   .log-details { color: var(--text3); font-size: 11px; flex: 1; }
 
-  .score-bar { display:flex; gap:2px; align-items:center; }
-  .score-dot { width:8px; height:8px; border-radius:50%; background:var(--border2); }
-  .score-dot.on { background:var(--accent); }
-  .tag-enviado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(74,222,128,0.1); color:var(--accent2); }
-  .tag-ignorado { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(244,63,94,0.1); color:var(--accent4); }
-  .tag-origem { padding:3px 10px; border-radius:4px; font-size:10px; background:rgba(108,99,255,0.1); color:var(--accent); }
-  .tag-utm { padding:2px 8px; border-radius:4px; font-size:10px; background:rgba(245,158,11,0.1); color:var(--accent3); max-width:160px; overflow:hidden; text-overflow:ellipsis; display:inline-block; }
-
   .filter-select { padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font-size: 12px; font-family: var(--mono); outline: none; }
+
+  .pagination { display: flex; align-items: center; gap: 6px; padding: 14px 20px; border-top: 1px solid var(--border); flex-wrap: wrap; background: var(--bg2); }
+  .pg-btn { height: 30px; min-width: 30px; padding: 0 10px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 7px; color: var(--text2); font-family: var(--mono); font-size: 11px; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; display: inline-flex; align-items: center; justify-content: center; }
+  .pg-btn:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pg-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .pg-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+  .pg-info { color: var(--text3); font-size: 11px; flex: 1; text-align: right; font-family: var(--mono); }
 
   .loading { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
   .empty { text-align: center; padding: 40px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
@@ -148,63 +136,6 @@
     .funil-grid { grid-template-columns: repeat(3, 1fr); }
     .nav-tab { padding: 6px 10px; font-size: 12px; }
   }
-
-  /* PAGINAÇÃO */
-  .pagination {
-    display: flex; align-items: center; gap: 6px;
-    padding: 14px 20px; border-top: 1px solid var(--border);
-    flex-wrap: wrap; background: var(--bg2);
-  }
-  .pg-btn {
-    height: 30px; min-width: 30px; padding: 0 10px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-radius: 7px;
-    color: var(--text2);
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .pg-btn:hover:not(:disabled) {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-  .pg-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    font-weight: 600;
-  }
-  .pg-btn:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-  }
-  .pg-info {
-    color: var(--text3); font-size: 11px;
-    flex: 1; text-align: right;
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* THEME TOGGLE */
-  .theme-toggle {
-    width: 34px; height: 34px;
-    border-radius: 8px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text2);
-    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
-  }
-  .theme-toggle:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    transform: rotate(18deg);
-  }
-  #theme-icon { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -220,14 +151,8 @@ let SUPABASE_TOKEN = null;
     <div class="login-logo">▸ Dashboard</div>
     <div class="login-title">Acesso restrito</div>
     <div class="login-sub">Entre com suas credenciais para continuar</div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="login-user" placeholder="seu@email.com" autocomplete="email" />
-    </div>
-    <div class="field">
-      <label>Senha</label>
-      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
-    </div>
+    <div class="field"><label>Email</label><input type="email" id="login-user" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn-login" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-error">Email ou senha incorretos</div>
   </div>
@@ -248,8 +173,8 @@ let SUPABASE_TOKEN = null;
     <div class="topbar-right">
       <span class="user-email" id="user-email"></span>
       <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Alternar tema">
-        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path class="moon-path" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -258,13 +183,13 @@ let SUPABASE_TOKEN = null;
 
   <div class="filters">
     <span class="filter-label">Período</span>
-    <input type="date" class="filter-input" id="date-from" />
+    <input type="date" class="filter-input" id="date-from"/>
     <span class="filter-label" style="color:var(--text3)">até</span>
-    <input type="date" class="filter-input" id="date-to" />
+    <input type="date" class="filter-input" id="date-to"/>
     <button class="btn-filter" onclick="loadAll()">Aplicar</button>
     <button class="btn-preset" onclick="setPreset(7,this)">7d</button>
     <button class="btn-preset" onclick="setPreset(15,this)">15d</button>
-    <button class="btn-preset active" onclick="setPreset(30,this)">30d</button>
+    <button class="btn-preset" onclick="setPreset(30,this)">30d</button>
     <button class="btn-preset" onclick="setPreset(90,this)">90d</button>
   </div>
 
@@ -313,46 +238,24 @@ let SUPABASE_TOKEN = null;
     <!-- UTMs -->
     <div id="page-utm" class="page">
       <div class="cards-grid" id="utm-cards"><div class="loading">carregando...</div></div>
-      <!-- Cards top anúncio por tipo -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px" id="utm-tipo-cards"></div>
-
-      <!-- Tabela por anúncio (utm_content) -->
       <div class="table-box" style="margin-bottom:24px">
         <div class="table-header"><div class="table-title">Por anúncio (utm_content)</div></div>
         <div class="table-wrap">
           <table>
-            <thead><tr>
-              <th>Anúncio (content)</th><th>Campanha</th><th>Term</th>
-              <th>Total</th><th>Franqueados</th><th>Parceiros</th>
-            </tr></thead>
+            <thead><tr><th>Anúncio (content)</th><th>Campanha</th><th>Term</th><th>Total</th><th>Franqueados</th><th>Parceiros</th></tr></thead>
             <tbody id="utm-anuncios-body"><tr><td colspan="6" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
-
-      <!-- Gráficos franqueado vs parceiro -->
       <div class="charts-grid" style="margin-bottom:24px">
-        <div class="chart-box">
-          <div class="chart-title">Top anúncios → Franqueados</div>
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-franqueado"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">Top anúncios → Parceiros</div>
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-parceiro"></canvas></div>
-        </div>
+        <div class="chart-box"><div class="chart-title">Top anúncios → Franqueados</div><div class="chart-wrap" style="height:240px"><canvas id="chart-utm-franqueado"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Top anúncios → Parceiros</div><div class="chart-wrap" style="height:240px"><canvas id="chart-utm-parceiro"></canvas></div></div>
       </div>
-
       <div class="charts-grid">
-        <div class="chart-box">
-          <div class="chart-title">Leads por campanha (top 8)</div>
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-campaign"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <div class="chart-title">Leads por source</div>
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-utm-source"></canvas></div>
-        </div>
+        <div class="chart-box"><div class="chart-title">Leads por campanha (top 8)</div><div class="chart-wrap" style="height:240px"><canvas id="chart-utm-campaign"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Leads por source</div><div class="chart-wrap" style="height:240px"><canvas id="chart-utm-source"></canvas></div></div>
       </div>
-      <!-- Agrupado por campanha -->
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Por campanha</div>
@@ -360,33 +263,23 @@ let SUPABASE_TOKEN = null;
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr>
-              <th>Campanha</th><th>Source</th><th>Medium</th><th>Leads</th><th>Franqueados</th><th>Parceiros</th><th>% do total</th>
-            </tr></thead>
-            <tbody id="utm-camp-body"><tr><td colspan="5" class="loading">carregando...</td></tr></tbody>
+            <thead><tr><th>Campanha</th><th>Source</th><th>Medium</th><th>Leads</th><th>Franqueados</th><th>Parceiros</th><th>% do total</th></tr></thead>
+            <tbody id="utm-camp-body"><tr><td colspan="7" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
-      <!-- Lista individual -->
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Leads individuais</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <select id="utm-filter-camp" class="filter-select" onchange="filtrarUTMLeads()">
-              <option value="">Todas campanhas</option>
-            </select>
-            <select id="utm-filter-source" class="filter-select" onchange="filtrarUTMLeads()">
-              <option value="">Todos sources</option>
-            </select>
+            <select id="utm-filter-camp" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todas campanhas</option></select>
+            <select id="utm-filter-source" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todos sources</option></select>
             <input type="text" id="utm-search-lead" placeholder="Buscar nome..." oninput="filtrarUTMLeads()" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:var(--mono);outline:none;width:150px">
           </div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr>
-              <th>Data</th><th>Nome</th><th>Etapa</th>
-              <th>UTM Source</th><th>UTM Medium</th><th>UTM Campaign</th><th>UTM Content</th><th>UTM Term</th>
-            </tr></thead>
+            <thead><tr><th>Data</th><th>Nome</th><th>Etapa</th><th>UTM Source</th><th>UTM Medium</th><th>UTM Campaign</th><th>UTM Content</th><th>UTM Term</th></tr></thead>
             <tbody id="utm-leads-body"><tr><td colspan="8" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
@@ -456,30 +349,31 @@ async function doLogin() {
     err.style.display = 'block';
   }
 }
+
 async function doLogout() {
   await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
     method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_TOKEN}` }
   });
   sessionStorage.clear(); location.reload();
 }
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('user-email').textContent = sessionStorage.getItem('sb_email') || '';
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    setTimeout(() => updateThemeIcon(true), 0);
+  }
+  setToday();
+}
+
 function setToday() {
   const hoje = new Date().toISOString().slice(0,10);
   document.getElementById('date-from').value = hoje;
   document.getElementById('date-to').value   = hoje;
   document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
   loadAll();
-}
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  const email = sessionStorage.getItem('sb_email') || '';
-  document.getElementById('user-email').textContent = email;
-  // Restaura tema
-  if (localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light');
-    setTimeout(() => updateThemeIcon(true), 0);
-  }
-  setToday();
 }
 
 function toggleTheme() {
@@ -492,8 +386,7 @@ function updateThemeIcon(isLight) {
   const icon = document.getElementById('theme-icon');
   if (!icon) return;
   if (isLight) {
-    icon.innerHTML = `
-      <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+    icon.innerHTML = `<circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
       <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -503,14 +396,13 @@ function updateThemeIcon(isLight) {
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`;
   } else {
-    icon.innerHTML = `<path class="moon-path" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
   }
 }
+
 document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 const savedToken = sessionStorage.getItem('sb_token');
 if (savedToken) { SUPABASE_TOKEN = savedToken; showApp(); }
-
-// Auto refresh
 setInterval(() => { loadAll(); }, 60 * 1000);
 
 // ─── NAVIGATION ──────────────────────────────────────────
@@ -548,8 +440,10 @@ async function loadAll() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
-  const params = `data_entrada=gte.${from}T03:00:00Z&data_entrada=lte.${to}T02:59:59Z&order=data_entrada.desc&limit=1000`;
-  const data = await supaFetch('metricas_diarias', params);
+
+  // metricas_diarias usa coluna "data" (date)
+  const metricasParams = `data=gte.${from}&data=lte.${to}&order=data.asc`;
+  const data = await supaFetch('metricas_diarias', metricasParams);
   renderCards(data); renderCharts(data); renderTabela(data); renderFunil(data);
   loadLogs(); loadEventos(); loadUTMs();
 }
@@ -641,19 +535,20 @@ async function loadUTMs() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
+  // Ajuste fuso UTC-3 (Brasília)
   const params = `data_entrada=gte.${from}T03:00:00Z&data_entrada=lte.${to}T02:59:59Z&order=data_entrada.desc&limit=1000`;
   utmData = await supaFetch('leads_utm', params);
   renderUTMs(utmData);
 }
 
 function renderUTMs(data) {
-  const total = data.length;
-  const comUTM = data.filter(d => d.utm_campaign).length;
-  const campanhas = [...new Set(data.map(d => d.utm_campaign).filter(Boolean))].length;
-  const sources   = [...new Set(data.map(d => d.utm_source).filter(Boolean))].length;
-
+  const total    = data.length;
+  const comUTM   = data.filter(d => d.utm_campaign).length;
+  const campanhas= [...new Set(data.map(d => d.utm_campaign).filter(Boolean))].length;
+  const sources  = [...new Set(data.map(d => d.utm_source).filter(Boolean))].length;
   const franqueados = data.filter(d => d.status_funil !== 'Parceiro Help').length;
   const parceiros   = data.filter(d => d.status_funil === 'Parceiro Help').length;
+
   document.getElementById('utm-cards').innerHTML = `
     <div class="card accent-purple"><div class="card-label">Total leads</div><div class="card-value">${total}</div></div>
     <div class="card accent-amber"><div class="card-label">Com UTM</div><div class="card-value">${comUTM}</div><div class="card-sub">${total>0?((comUTM/total)*100).toFixed(0):0}% do total</div></div>
@@ -662,36 +557,25 @@ function renderUTMs(data) {
     <div class="card"><div class="card-label">Campanhas</div><div class="card-value">${campanhas}</div></div>
     <div class="card"><div class="card-label">Sources</div><div class="card-value">${sources}</div></div>`;
 
-  // Agrupado por campanha
   const porCamp = {};
   for (const d of data) {
     const k = d.utm_campaign || '(sem campanha)';
-    if (!porCamp[k]) porCamp[k] = { leads:0, franqueados:0, parceiros:0, source: d.utm_source||'-', medium: d.utm_medium||'-' };
+    if (!porCamp[k]) porCamp[k] = { leads:0, franqueados:0, parceiros:0, source:d.utm_source||'-', medium:d.utm_medium||'-' };
     porCamp[k].leads++;
     if (d.status_funil === 'Parceiro Help') porCamp[k].parceiros++;
     else porCamp[k].franqueados++;
   }
   const campArr = Object.entries(porCamp).sort((a,b)=>b[1].leads-a[1].leads);
 
-  // Gráfico campanhas
   const top8 = campArr.slice(0,8);
   destroyChart('utm-campaign');
-  chartInstances['utm-campaign'] = new Chart(document.getElementById('chart-utm-campaign'), {
-    type:'bar',
-    data:{ labels: top8.map(([k])=>k.length>20?k.slice(0,20)+'…':k), datasets:[{ data:top8.map(([,v])=>v.leads), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] },
-    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
-  });
+  chartInstances['utm-campaign'] = new Chart(document.getElementById('chart-utm-campaign'), { type:'bar', data:{ labels:top8.map(([k])=>k.length>20?k.slice(0,20)+'…':k), datasets:[{ data:top8.map(([,v])=>v.leads), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] }, options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } } });
 
-  // Gráfico sources
   const porSource = {};
   for (const d of data) { const k=d.utm_source||'(direto)'; porSource[k]=(porSource[k]||0)+1; }
   const srcArr = Object.entries(porSource).sort((a,b)=>b[1]-a[1]);
   destroyChart('utm-source');
-  chartInstances['utm-source'] = new Chart(document.getElementById('chart-utm-source'), {
-    type:'doughnut',
-    data:{ labels: srcArr.map(([k])=>k), datasets:[{ data:srcArr.map(([,v])=>v), backgroundColor:['#6c63ff','#4ade80','#f59e0b','#f43f5e','#38bdf8','#a78bfa','#34d399','#fb923c'], borderWidth:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'right', labels:{color:'#8888aa',font:{size:11},boxWidth:10} } } }
-  });
+  chartInstances['utm-source'] = new Chart(document.getElementById('chart-utm-source'), { type:'doughnut', data:{ labels:srcArr.map(([k])=>k), datasets:[{ data:srcArr.map(([,v])=>v), backgroundColor:['#6c63ff','#4ade80','#f59e0b','#f43f5e','#38bdf8','#a78bfa','#34d399','#fb923c'], borderWidth:0 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:true, position:'right', labels:{color:'#8888aa',font:{size:11},boxWidth:10} } } } });
 
   renderUTMCampTabela(campArr, total);
   renderUTMTipoCharts(data);
@@ -711,70 +595,41 @@ function renderUTMCampTabela(campArr, total) {
 }
 
 function renderUTMTipoCharts(data) {
-  // Agrupa por utm_content (anúncio)
   const porAnuncio = {};
   for (const d of data) {
     const k = d.utm_content || '(sem anúncio)';
-    if (!porAnuncio[k]) porAnuncio[k] = {
-      franqueados: 0, parceiros: 0,
-      campaign: d.utm_campaign || '-',
-      term: d.utm_term || '-'
-    };
+    if (!porAnuncio[k]) porAnuncio[k] = { franqueados:0, parceiros:0, campaign:d.utm_campaign||'-', term:d.utm_term||'-' };
     if (d.status_funil === 'Parceiro Help') porAnuncio[k].parceiros++;
     else porAnuncio[k].franqueados++;
   }
-
   const anuncioArr = Object.entries(porAnuncio);
   const topFranq = anuncioArr.filter(([,v])=>v.franqueados>0).sort((a,b)=>b[1].franqueados-a[1].franqueados);
   const topParc  = anuncioArr.filter(([,v])=>v.parceiros>0).sort((a,b)=>b[1].parceiros-a[1].parceiros);
 
-  const topFranqNome = topFranq[0] ? topFranq[0][0] : '-';
-  const topFranqNum  = topFranq[0] ? topFranq[0][1].franqueados : 0;
-  const topFranqCamp = topFranq[0] ? topFranq[0][1].campaign : '-';
-  const topParcNome  = topParc[0]  ? topParc[0][0]  : '-';
-  const topParcNum   = topParc[0]  ? topParc[0][1].parceiros  : 0;
-  const topParcCamp  = topParc[0]  ? topParc[0][1].campaign  : '-';
-
   document.getElementById('utm-tipo-cards').innerHTML = `
     <div class="card accent-green">
       <div class="card-label">🏆 Top anúncio → Franqueado</div>
-      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topFranqNome}</div>
-      <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topFranqCamp}</div>
-      <div class="card-sub" style="margin-top:4px;color:var(--accent2)">${topFranqNum} franqueados</div>
+      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topFranq[0]?topFranq[0][0]:'-'}</div>
+      <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topFranq[0]?topFranq[0][1].campaign:'-'}</div>
+      <div class="card-sub" style="margin-top:4px;color:var(--accent2)">${topFranq[0]?topFranq[0][1].franqueados:0} franqueados</div>
     </div>
     <div class="card accent-purple">
       <div class="card-label">🏆 Top anúncio → Parceiro</div>
-      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topParcNome}</div>
-      <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topParcCamp}</div>
-      <div class="card-sub" style="margin-top:4px;color:var(--accent)">${topParcNum} parceiros</div>
+      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topParc[0]?topParc[0][0]:'-'}</div>
+      <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topParc[0]?topParc[0][1].campaign:'-'}</div>
+      <div class="card-sub" style="margin-top:4px;color:var(--accent)">${topParc[0]?topParc[0][1].parceiros:0} parceiros</div>
     </div>`;
 
-  // Gráfico franqueados top 8 por anúncio
   const top8f = topFranq.slice(0,8);
   destroyChart('utm-franqueado');
-  chartInstances['utm-franqueado'] = new Chart(document.getElementById('chart-utm-franqueado'), {
-    type:'bar',
-    data:{ labels: top8f.map(([k])=>k.length>24?k.slice(0,24)+'…':k), datasets:[{ data:top8f.map(([,v])=>v.franqueados), backgroundColor:'rgba(74,222,128,0.4)', borderColor:'#4ade80', borderWidth:1 }] },
-    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
-  });
+  chartInstances['utm-franqueado'] = new Chart(document.getElementById('chart-utm-franqueado'), { type:'bar', data:{ labels:top8f.map(([k])=>k.length>24?k.slice(0,24)+'…':k), datasets:[{ data:top8f.map(([,v])=>v.franqueados), backgroundColor:'rgba(74,222,128,0.4)', borderColor:'#4ade80', borderWidth:1 }] }, options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } } });
 
-  // Gráfico parceiros top 8 por anúncio
   const top8p = topParc.slice(0,8);
   destroyChart('utm-parceiro');
-  chartInstances['utm-parceiro'] = new Chart(document.getElementById('chart-utm-parceiro'), {
-    type:'bar',
-    data:{ labels: top8p.map(([k])=>k.length>24?k.slice(0,24)+'…':k), datasets:[{ data:top8p.map(([,v])=>v.parceiros), backgroundColor:'rgba(108,99,255,0.4)', borderColor:'#6c63ff', borderWidth:1 }] },
-    options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } }
-  });
+  chartInstances['utm-parceiro'] = new Chart(document.getElementById('chart-utm-parceiro'), { type:'bar', data:{ labels:top8p.map(([k])=>k.length>24?k.slice(0,24)+'…':k), datasets:[{ data:top8p.map(([,v])=>v.parceiros), backgroundColor:'rgba(108,99,255,0.4)', borderColor:'#6c63ff', borderWidth:1 }] }, options:{ ...baseOpts, indexAxis:'y', scales:{ x:{ticks:{color:'#555570',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}, y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}} } } });
 
-  // Tabela detalhada de anúncios
-  renderAnunciosTabela(anuncioArr.sort((a,b)=>(b[1].franqueados+b[1].parceiros)-(a[1].franqueados+a[1].parceiros)));
-}
-
-function renderAnunciosTabela(arr) {
   const el = document.getElementById('utm-anuncios-body');
-  if (!el) return;
-  el.innerHTML = arr.map(([k,v]) => `<tr>
+  if (el) el.innerHTML = anuncioArr.sort((a,b)=>(b[1].franqueados+b[1].parceiros)-(a[1].franqueados+a[1].parceiros)).map(([k,v]) => `<tr>
     <td style="white-space:normal;word-break:break-word;max-width:300px;color:var(--text)">${k}</td>
     <td style="white-space:normal;word-break:break-word;max-width:200px;color:var(--accent3)">${v.campaign}</td>
     <td style="color:var(--text2)">${v.term}</td>
@@ -833,31 +688,25 @@ function renderUTMLeadsPage() {
   const start = (utmLeadsPage - 1) * UTM_PAGE_SIZE;
   const slice = data.slice(start, start + UTM_PAGE_SIZE);
 
-  const tag = v => v ? `<span style="color:var(--accent3);white-space:normal;word-break:break-word">${v}</span>` : '<span style="color:var(--text3)">-</span>';
-
   document.getElementById('utm-leads-body').innerHTML = slice.map(d => `<tr>
     <td class="highlight">${d.data_entrada ? d.data_entrada.slice(0,10) : '-'}</td>
     <td>${d.nome||'-'}</td>
     <td style="color:var(--text2)">${d.status_funil||'-'}</td>
-    <td>${tag(d.utm_source)}</td>
-    <td>${tag(d.utm_medium)}</td>
-    <td style="color:var(--accent3);white-space:normal;word-break:break-word">${d.utm_campaign||'-'}</td>
-    <td style="color:var(--accent3);white-space:normal;word-break:break-word">${d.utm_content||'-'}</td>
-    <td>${tag(d.utm_term)}</td>
+    <td style="color:var(--accent3)">${d.utm_source||'-'}</td>
+    <td style="color:var(--accent3)">${d.utm_medium||'-'}</td>
+    <td style="white-space:normal;word-break:break-word;color:var(--accent3)">${d.utm_campaign||'-'}</td>
+    <td style="white-space:normal;word-break:break-word;color:var(--accent3)">${d.utm_content||'-'}</td>
+    <td style="color:var(--accent3)">${d.utm_term||'-'}</td>
   </tr>`).join('') || '<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
 
-  // Paginação
   const pg = document.getElementById('utm-leads-pagination');
   if (!pg) return;
-  if (totalPages <= 1) {
-    pg.innerHTML = `<span class="pg-info">Total: ${total} leads</span>`;
-    return;
-  }
+  if (totalPages <= 1) { pg.innerHTML = `<span class="pg-info">Total: ${total} leads</span>`; return; }
   let btns = `<button class="pg-btn" onclick="utmGoPage(${utmLeadsPage-1})" ${utmLeadsPage===1?'disabled':''}>← Ant</button>`;
   for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || (i >= utmLeadsPage-2 && i <= utmLeadsPage+2)) {
+    if (i===1||i===totalPages||(i>=utmLeadsPage-2&&i<=utmLeadsPage+2)) {
       btns += `<button class="pg-btn ${i===utmLeadsPage?'active':''}" onclick="utmGoPage(${i})">${i}</button>`;
-    } else if (i === utmLeadsPage-3 || i === utmLeadsPage+3) {
+    } else if (i===utmLeadsPage-3||i===utmLeadsPage+3) {
       btns += `<span style="color:var(--text3);padding:0 4px">…</span>`;
     }
   }
@@ -867,16 +716,6 @@ function renderUTMLeadsPage() {
 
 function utmGoPage(p) {
   const totalPages = Math.ceil(utmLeadsFiltered.length / UTM_PAGE_SIZE);
-  if (p < 1 || p > totalPages) return;
-  utmLeadsPage = p;
-  renderUTMLeadsPage();
-  document.getElementById('utm-leads-body').closest('.table-box').scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-
-function utmGoPage(p) {
-  const total = utmLeadsFiltered.length;
-  const totalPages = Math.ceil(total / UTM_PAGE_SIZE);
   if (p < 1 || p > totalPages) return;
   utmLeadsPage = p;
   renderUTMLeadsPage();
