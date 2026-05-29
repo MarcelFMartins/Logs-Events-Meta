@@ -259,7 +259,7 @@ let SUPABASE_TOKEN = null;
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Campanha</th><th>Source</th><th>Medium</th><th>Leads</th><th>% do total</th>
+              <th>Campanha</th><th>Source</th><th>Medium</th><th>Leads</th><th>Franqueados</th><th>Parceiros</th><th>% do total</th>
             </tr></thead>
             <tbody id="utm-camp-body"><tr><td colspan="5" class="loading">carregando...</td></tr></tbody>
           </table>
@@ -506,9 +506,13 @@ function renderUTMs(data) {
   const campanhas = [...new Set(data.map(d => d.utm_campaign).filter(Boolean))].length;
   const sources   = [...new Set(data.map(d => d.utm_source).filter(Boolean))].length;
 
+  const franqueados = data.filter(d => d.status_funil !== 'Parceiro Help').length;
+  const parceiros   = data.filter(d => d.status_funil === 'Parceiro Help').length;
   document.getElementById('utm-cards').innerHTML = `
     <div class="card accent-purple"><div class="card-label">Total leads</div><div class="card-value">${total}</div></div>
     <div class="card accent-amber"><div class="card-label">Com UTM</div><div class="card-value">${comUTM}</div><div class="card-sub">${total>0?((comUTM/total)*100).toFixed(0):0}% do total</div></div>
+    <div class="card accent-green"><div class="card-label">Franqueados</div><div class="card-value">${franqueados}</div><div class="card-sub">${total>0?((franqueados/total)*100).toFixed(0):0}% do total</div></div>
+    <div class="card accent-purple"><div class="card-label">Parceiros</div><div class="card-value">${parceiros}</div><div class="card-sub">${total>0?((parceiros/total)*100).toFixed(0):0}% do total</div></div>
     <div class="card"><div class="card-label">Campanhas</div><div class="card-value">${campanhas}</div></div>
     <div class="card"><div class="card-label">Sources</div><div class="card-value">${sources}</div></div>`;
 
@@ -516,8 +520,10 @@ function renderUTMs(data) {
   const porCamp = {};
   for (const d of data) {
     const k = d.utm_campaign || '(sem campanha)';
-    if (!porCamp[k]) porCamp[k] = { leads:0, source: d.utm_source||'-', medium: d.utm_medium||'-' };
+    if (!porCamp[k]) porCamp[k] = { leads:0, franqueados:0, parceiros:0, source: d.utm_source||'-', medium: d.utm_medium||'-' };
     porCamp[k].leads++;
+    if (d.status_funil === 'Parceiro Help') porCamp[k].parceiros++;
+    else porCamp[k].franqueados++;
   }
   const campArr = Object.entries(porCamp).sort((a,b)=>b[1].leads-a[1].leads);
 
@@ -548,11 +554,13 @@ function renderUTMs(data) {
 
 function renderUTMCampTabela(campArr, total) {
   document.getElementById('utm-camp-body').innerHTML = campArr.map(([k,v]) => `<tr>
-    <td class="highlight" style="color:var(--accent3);max-width:400px;white-space:normal;word-break:break-word">${k}</td>
+    <td style="color:var(--accent3);max-width:400px;white-space:normal;word-break:break-word">${k}</td>
     <td>${v.source}</td><td>${v.medium}</td>
     <td class="num highlight">${v.leads}</td>
+    <td class="num" style="color:var(--accent2)">${v.franqueados} <span style="font-size:10px;color:var(--text3)">${v.leads>0?((v.franqueados/v.leads)*100).toFixed(0):0}%</span></td>
+    <td class="num" style="color:var(--accent)">${v.parceiros} <span style="font-size:10px;color:var(--text3)">${v.leads>0?((v.parceiros/v.leads)*100).toFixed(0):0}%</span></td>
     <td class="num">${total>0?((v.leads/total)*100).toFixed(1):0}%</td>
-  </tr>`).join('') || '<tr><td colspan="5" class="empty">Sem dados</td></tr>';
+  </tr>`).join('') || '<tr><td colspan="7" class="empty">Sem dados</td></tr>';
 }
 
 function filtrarUTMCamp() {
@@ -561,8 +569,10 @@ function filtrarUTMCamp() {
   for (const d of utmData) {
     const k = d.utm_campaign || '(sem campanha)';
     if (!k.toLowerCase().includes(q)) continue;
-    if (!porCamp[k]) porCamp[k] = { leads:0, source:d.utm_source||'-', medium:d.utm_medium||'-' };
+    if (!porCamp[k]) porCamp[k] = { leads:0, franqueados:0, parceiros:0, source:d.utm_source||'-', medium:d.utm_medium||'-' };
     porCamp[k].leads++;
+    if (d.status_funil === 'Parceiro Help') porCamp[k].parceiros++;
+    else porCamp[k].franqueados++;
   }
   renderUTMCampTabela(Object.entries(porCamp).sort((a,b)=>b[1].leads-a[1].leads), utmData.length);
 }
@@ -586,17 +596,23 @@ function filtrarUTMLeads() {
 }
 
 function renderUTMLeadsTabela(data) {
-  const tag = v => v ? `<span class="tag-utm" title="${v}">${v.length>18?v.slice(0,18)+'…':v}</span>` : '<span style="color:var(--text3)">-</span>';
-  document.getElementById('utm-leads-body').innerHTML = data.slice(0,300).map(d => `<tr>
+  const tag = v => v ? `<span style="color:var(--accent3);white-space:normal;word-break:break-word">${v}</span>` : '<span style="color:var(--text3)">-</span>';
+  document.getElementById('utm-leads-body').innerHTML = data.slice(0,300).map(d => {
+    const isParceiro = d.status_funil === 'Parceiro Help';
+    const tipoBadge = isParceiro
+      ? '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(108,99,255,0.15);color:var(--accent)">Parceiro</span>'
+      : '<span style="padding:2px 8px;border-radius:4px;font-size:10px;background:rgba(74,222,128,0.1);color:var(--accent2)">Franqueado</span>';
+    return `<tr>
     <td class="highlight">${d.data_entrada ? d.data_entrada.slice(0,10) : '-'}</td>
     <td>${d.nome||'-'}</td>
-    <td style="color:var(--text2)">${d.status_funil||'-'}</td>
+    <td>${tipoBadge}</td>
     <td>${tag(d.utm_source)}</td>
     <td>${tag(d.utm_medium)}</td>
     <td>${tag(d.utm_campaign)}</td>
     <td>${tag(d.utm_content)}</td>
     <td>${tag(d.utm_term)}</td>
-  </tr>`).join('') || '<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
+  </tr>`;
+  }).join('') || '<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
 }
 
 // ─── EVENTOS META ────────────────────────────────────────
