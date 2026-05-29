@@ -111,6 +111,30 @@
   td.num { text-align: right; }
   td.highlight { color: var(--text); }
 
+  /* ── TABELA LEADS UTM ── wrap uniforme em todas as colunas ── */
+  #utm-leads-body td {
+    white-space: normal;
+    word-break: break-word;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  /* Data: sempre numa linha */
+  #utm-leads-body td:nth-child(1) { min-width: 88px;  white-space: nowrap; }
+  /* Nome */
+  #utm-leads-body td:nth-child(2) { min-width: 120px; }
+  /* Etapa */
+  #utm-leads-body td:nth-child(3) { min-width: 100px; }
+  /* Source */
+  #utm-leads-body td:nth-child(4) { min-width: 50px;  }
+  /* Medium */
+  #utm-leads-body td:nth-child(5) { min-width: 55px;  }
+  /* Campaign */
+  #utm-leads-body td:nth-child(6) { min-width: 160px; max-width: 220px; }
+  /* Content */
+  #utm-leads-body td:nth-child(7) { min-width: 160px; max-width: 220px; }
+  /* Term */
+  #utm-leads-body td:nth-child(8) { min-width: 160px; max-width: 220px; }
+
   /* FUNIL */
   .funil-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 16px; }
   @media(min-width: 480px) { .funil-grid { grid-template-columns: repeat(7, 1fr); } }
@@ -665,11 +689,12 @@ function renderUTMLeadsPage() {
   const slice=data.slice(start,start+UTM_PAGE_SIZE);
   document.getElementById('utm-leads-body').innerHTML=slice.map(d=>`<tr>
     <td class="highlight">${d.data_entrada?d.data_entrada.slice(0,10):'-'}</td>
-    <td>${d.nome||'-'}</td><td style="color:var(--text2)">${d.status_funil||'-'}</td>
+    <td>${d.nome||'-'}</td>
+    <td style="color:var(--text2)">${d.status_funil||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_source||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_medium||'-'}</td>
-    <td style="white-space:normal;word-break:break-word;color:var(--accent3)">${d.utm_campaign||'-'}</td>
-    <td style="white-space:normal;word-break:break-word;color:var(--accent3)">${d.utm_content||'-'}</td>
+    <td style="color:var(--accent3)">${d.utm_campaign||'-'}</td>
+    <td style="color:var(--accent3)">${d.utm_content||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_term||'-'}</td>
   </tr>`).join('')||'<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
   const pg=document.getElementById('utm-leads-pagination');
