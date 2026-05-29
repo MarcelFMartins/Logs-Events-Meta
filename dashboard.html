@@ -548,7 +548,7 @@ async function loadAll() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
-  const params = `data=gte.${from}&data=lte.${to}&order=data.asc`;
+  const params = `data_entrada=gte.${from}T03:00:00Z&data_entrada=lte.${to}T02:59:59Z&order=data_entrada.desc&limit=1000`;
   const data = await supaFetch('metricas_diarias', params);
   renderCards(data); renderCharts(data); renderTabela(data); renderFunil(data);
   loadLogs(); loadEventos(); loadUTMs();
@@ -641,7 +641,7 @@ async function loadUTMs() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
   if (!from || !to) return;
-  const params = `data_entrada=gte.${from}T00:00:00&data_entrada=lte.${to}T23:59:59&order=data_entrada.desc&limit=1000`;
+  const params = `data_entrada=gte.${from}T03:00:00Z&data_entrada=lte.${to}T02:59:59Z&order=data_entrada.desc&limit=1000`;
   utmData = await supaFetch('leads_utm', params);
   renderUTMs(utmData);
 }
