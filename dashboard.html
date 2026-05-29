@@ -462,6 +462,13 @@ async function doLogout() {
   });
   sessionStorage.clear(); location.reload();
 }
+function setToday() {
+  const hoje = new Date().toISOString().slice(0,10);
+  document.getElementById('date-from').value = hoje;
+  document.getElementById('date-to').value   = hoje;
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+  loadAll();
+}
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
@@ -472,7 +479,7 @@ function showApp() {
     document.body.classList.add('light');
     setTimeout(() => updateThemeIcon(true), 0);
   }
-  setPreset(30);
+  setToday();
 }
 
 function toggleTheme() {
