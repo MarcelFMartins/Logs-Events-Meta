@@ -349,6 +349,7 @@ let SUPABASE_TOKEN = null;
 
     <!-- EVENTOS META -->
     <div id="page-eventos" class="page">
+      <div id="eventos-debug" style="display:none;margin-bottom:12px;padding:10px 14px;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.3);border-radius:8px;font-family:var(--mono);font-size:11px;color:var(--accent);line-height:1.6"></div>
 
       <!-- ENGAJAMENTO BREAKDOWN -->
       <div class="eventos-section-title">▸ Engajamento (page_engagement · post_engagement)</div>
@@ -753,7 +754,19 @@ let eventosData=[];
 async function loadEventos() {
   const from=document.getElementById('date-from').value, to=document.getElementById('date-to').value;
   if (!from||!to) return;
-  eventosData=await supaFetch('eventos_facebook',`data_referencia=gte.${from}&data_referencia=lte.${to}&order=data_referencia.desc,total_eventos.desc`);
+  eventosData=await supaFetch('eventos_facebook',`data_referencia=gte.${from}&data_referencia=lte.${to}&order=data_referencia.desc,total_eventos.desc&limit=5000`);
+
+  // ── DEBUG: log what the DB actually returned ──
+  const _dbg={};
+  for(const e of eventosData){_dbg[e.evento]=(_dbg[e.evento]||0)+(e.total_eventos||0);}
+  console.log('[EVENTOS] linhas:', eventosData.length, '| distintos:', Object.keys(_dbg), '| valores:', _dbg);
+  const _de=document.getElementById('eventos-debug');
+  if(_de){
+    const vals=Object.entries(_dbg).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<b>${k}</b>: ${v.toLocaleString('pt-BR')}`).join(' &nbsp;·&nbsp; ');
+    _de.style.display='block';
+    _de.innerHTML=`🔍 <b>${eventosData.length} linhas</b> | <b>${Object.keys(_dbg).length} eventos distintos</b><br>${vals||'<i>nenhum dado no período</i>'}`;
+  }
+
   renderEventos(eventosData);
 }
 function filtrarEventos() {
