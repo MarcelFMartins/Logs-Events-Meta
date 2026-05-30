@@ -176,6 +176,26 @@
 
   .loading { text-align: center; padding: 32px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
   .empty { text-align: center; padding: 32px; color: var(--text3); font-family: var(--mono); font-size: 12px; }
+
+  /* EVENTOS BREAKDOWN */
+  .eventos-section-title { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--mono); margin: 20px 0 10px; }
+  .eventos-breakdown-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+  @media(min-width: 480px) { .eventos-breakdown-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media(min-width: 768px) { .eventos-breakdown-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 20px; } }
+  .ev-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: border-color 0.2s; }
+  .ev-card:hover { border-color: var(--border2); }
+  .ev-card.highlight-blue { border-color: rgba(108,99,255,0.25); background: rgba(108,99,255,0.04); }
+  .ev-card.highlight-green { border-color: rgba(74,222,128,0.2); background: rgba(74,222,128,0.03); }
+  .ev-card.highlight-amber { border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.03); }
+  .ev-card.highlight-red { border-color: rgba(244,63,94,0.2); background: rgba(244,63,94,0.03); }
+  .ev-card-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--mono); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-card-value { font-size: 19px; font-weight: 500; font-family: var(--mono); line-height: 1; color: var(--text); }
+  .ev-card.highlight-blue .ev-card-value { color: var(--accent); }
+  .ev-card.highlight-green .ev-card-value { color: var(--accent2); }
+  .ev-card.highlight-amber .ev-card-value { color: var(--accent3); }
+  .ev-card.highlight-red .ev-card-value { color: var(--accent4); }
+  .ev-card-pct { font-size: 9px; color: var(--text3); font-family: var(--mono); margin-top: 3px; }
+  .ev-section-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 16px; }
 </style>
 </head>
 <body>
@@ -329,13 +349,26 @@ let SUPABASE_TOKEN = null;
 
     <!-- EVENTOS META -->
     <div id="page-eventos" class="page">
-      <div class="cards-grid" id="eventos-cards"><div class="loading">carregando...</div></div>
+
+      <!-- ENGAJAMENTO BREAKDOWN -->
+      <div class="eventos-section-title">▸ Engajamento (page_engagement · post_engagement)</div>
+      <div class="eventos-breakdown-grid" id="eventos-engagement-cards"></div>
+      <hr class="ev-section-divider">
+
+      <!-- OUTROS EVENTOS -->
+      <div class="eventos-section-title">▸ Todos os eventos — detalhado</div>
+      <div class="eventos-breakdown-grid" id="eventos-all-cards"><div class="loading">carregando...</div></div>
+      <hr class="ev-section-divider">
+
+      <!-- GRÁFICO BAR -->
       <div class="charts-grid">
         <div class="chart-box" style="grid-column:1/-1">
           <div class="chart-title">Top eventos por volume</div>
           <div class="chart-wrap" style="height:240px"><canvas id="chart-eventos-bar"></canvas></div>
         </div>
       </div>
+
+      <!-- TABELA DETALHADA -->
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Todos os eventos</div>
@@ -728,15 +761,104 @@ function filtrarEventos() {
   renderEventosTabela(eventosData.filter(e=>e.evento.toLowerCase().includes(q)));
 }
 function renderEventos(data) {
+  // Aggregate by event name
   const agregado={};
   for (const e of data){agregado[e.evento]=(agregado[e.evento]||0)+(e.total_eventos||0);}
-  const top=Object.entries(agregado).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const nomes={lead:'Leads',link_click:'Cliques',landing_page_view:'Landing Views',video_view:'Vídeos',page_engagement:'Engajamento',post_reaction:'Reações'};
-  document.getElementById('eventos-cards').innerHTML=top.map(([k,v])=>`<div class="card accent-purple"><div class="card-label">${nomes[k]||k.replace(/_/g,' ')}</div><div class="card-value" style="font-size:18px">${v.toLocaleString('pt-BR')}</div></div>`).join('');
-  const top10=Object.entries(agregado).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  const total=Object.values(agregado).reduce((a,b)=>a+b,0);
+  const allSorted=Object.entries(agregado).sort((a,b)=>b[1]-a[1]);
+
+  // ── Color mapping per event ──
+  const colorMap={
+    page_engagement:'highlight-blue',
+    post_engagement:'highlight-blue',
+    lead:'highlight-green',
+    landing_page_view:'highlight-green',
+    link_click:'highlight-amber',
+    video_view:'highlight-amber',
+    post_reaction:'highlight-amber',
+    purchase:'highlight-red',
+    initiate_checkout:'highlight-red',
+    add_to_cart:'highlight-red',
+  };
+  const labelMap={
+    lead:'Lead',link_click:'Clique no link',landing_page_view:'Landing page view',
+    video_view:'Visualização vídeo',page_engagement:'Page engagement',
+    post_reaction:'Reação',post_engagement:'Post engagement',
+    purchase:'Compra',initiate_checkout:'Checkout',add_to_cart:'Add ao carrinho',
+  };
+
+  function evLabel(k){ return labelMap[k]||k.replace(/onsite_conversion\.|offsite_conversion\./g,'').replace(/_/g,' '); }
+  function evColor(k){ return colorMap[k]||''; }
+
+  function makeCard(k,v){
+    const pct=total>0?((v/total)*100).toFixed(1):'0';
+    const cls=evColor(k);
+    return `<div class="ev-card ${cls}">
+      <div class="ev-card-label" title="${k}">${evLabel(k)}</div>
+      <div class="ev-card-value">${v.toLocaleString('pt-BR')}</div>
+      <div class="ev-card-pct">${pct}% do total</div>
+    </div>`;
+  }
+
+  // ── Section 1: Engagement-type events ──
+  const engagementKeys=['page_engagement','post_engagement'];
+  const engCards=engagementKeys
+    .filter(k=>agregado[k]!==undefined)
+    .map(k=>makeCard(k,agregado[k]));
+  // Add sub-events that contain "engagement" in their name (beyond the two above)
+  const extraEng=allSorted
+    .filter(([k])=>k.includes('engagement')&&!engagementKeys.includes(k))
+    .map(([k,v])=>makeCard(k,v));
+  document.getElementById('eventos-engagement-cards').innerHTML=
+    (engCards.concat(extraEng)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem dados de engajamento</div>';
+
+  // ── Section 2: ALL events cards (sorted by volume) ──
+  document.getElementById('eventos-all-cards').innerHTML=
+    allSorted.map(([k,v])=>makeCard(k,v)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem eventos</div>';
+
+  // ── Bar chart: top 10 ──
+  const top10=allSorted.slice(0,10);
   destroyChart('eventos-bar');
   document.getElementById('chart-eventos-bar').parentElement.style.height=Math.max(260,top10.length*36+60)+'px';
-  chartInstances['eventos-bar']=new Chart(document.getElementById('chart-eventos-bar'),{type:'bar',data:{labels:top10.map(([k])=>k.replace('onsite_conversion.','').replace('offsite_conversion.','').replace(/_/g,' ')),datasets:[{data:top10.map(([,v])=>v),backgroundColor:'rgba(108,99,255,0.5)',borderColor:'#6c63ff',borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}}}}});
+  chartInstances['eventos-bar']=new Chart(document.getElementById('chart-eventos-bar'),{
+    type:'bar',
+    data:{
+      labels:top10.map(([k])=>evLabel(k)),
+      datasets:[{
+        data:top10.map(([,v])=>v),
+        backgroundColor:top10.map(([k])=>{
+          const c=evColor(k);
+          if(c==='highlight-blue') return 'rgba(108,99,255,0.55)';
+          if(c==='highlight-green') return 'rgba(74,222,128,0.45)';
+          if(c==='highlight-amber') return 'rgba(245,158,11,0.45)';
+          if(c==='highlight-red') return 'rgba(244,63,94,0.45)';
+          return 'rgba(108,99,255,0.4)';
+        }),
+        borderColor:top10.map(([k])=>{
+          const c=evColor(k);
+          if(c==='highlight-blue') return '#6c63ff';
+          if(c==='highlight-green') return '#4ade80';
+          if(c==='highlight-amber') return '#f59e0b';
+          if(c==='highlight-red') return '#f43f5e';
+          return '#6c63ff';
+        }),
+        borderWidth:1
+      }]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('pt-BR')}}
+      },
+      scales:{
+        x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+        y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+
   renderEventosTabela(data);
 }
 function renderEventosTabela(data) {
