@@ -299,11 +299,11 @@ let SUPABASE_TOKEN = null;
           <table>
             <thead><tr>
               <th>Data</th><th>Invest.</th><th>Impressões</th><th>Cliques</th><th>CTR</th>
-              <th>CPM</th><th>CPC</th><th>Leads</th><th>CPL</th><th>Agend.</th>
+              <th>CPM</th><th>CPC</th><th>Leads</th><th>CPL</th><th>Leads Funil</th><th>CPL Funil</th><th>Agend.</th>
               <th>1ª RM</th><th>1ª RR</th><th>2ª RM</th><th>2ª RR</th>
               <th>Vendas</th><th>Faturamento</th><th>ROAS</th>
             </tr></thead>
-            <tbody id="tabela-body"><tr><td colspan="17" class="loading">carregando...</td></tr></tbody>
+            <tbody id="tabela-body"><tr><td colspan="19" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -586,12 +586,12 @@ async function loadAll() {
 function renderCards(data) {
   const tot = data.reduce((a,r)=>({
     invest:a.invest+parseFloat(r.invest_total||0), impressoes:a.impressoes+(r.impressoes||0),
-    cliques:a.cliques+(r.cliques||0), leads:a.leads+(r.leads_funil||0),
+    cliques:a.cliques+(r.cliques||0), leads:a.leads+(r.leads||0), leads_funil:a.leads_funil+(r.leads_funil||0),
     agend:a.agend+(r.agendando||0), rm1:a.rm1+(r.primeira_rm||0),
     rr1:a.rr1+(r.total_primeira_rr||0), rm2:a.rm2+(r.segunda_rm||0),
     rr2:a.rr2+(r.segunda_rr_sql2||0), vendas:a.vendas+(r.vendas||0),
     fat:a.fat+parseFloat(r.faturamento||0)
-  }), {invest:0,impressoes:0,cliques:0,leads:0,agend:0,rm1:0,rr1:0,rm2:0,rr2:0,vendas:0,fat:0});
+  }), {invest:0,impressoes:0,cliques:0,leads:0,leads_funil:0,agend:0,rm1:0,rr1:0,rm2:0,rr2:0,vendas:0,fat:0});
   const cpl=tot.leads>0?tot.invest/tot.leads:0, cac=tot.vendas>0?tot.invest/tot.vendas:0;
   const roas=tot.invest>0?tot.fat/tot.invest:0, ctr=tot.impressoes>0?(tot.cliques/tot.impressoes*100):0;
   const fmt=(v,p=2)=>v.toLocaleString('pt-BR',{minimumFractionDigits:p,maximumFractionDigits:p});
@@ -602,6 +602,7 @@ function renderCards(data) {
     <div class="card"><div class="card-label">Cliques</div><div class="card-value">${fmtN(tot.cliques)}</div></div>
     <div class="card"><div class="card-label">CTR</div><div class="card-value">${fmt(ctr)}%</div></div>
     <div class="card accent-amber"><div class="card-label">Leads</div><div class="card-value">${fmtN(tot.leads)}</div><div class="card-sub">CPL ${fmtBRL(cpl)}</div></div>
+    <div class="card accent-amber"><div class="card-label">Leads Funil</div><div class="card-value">${fmtN(tot.leads_funil)}</div><div class="card-sub">CPL Funil ${fmtBRL(tot.leads_funil>0?tot.invest/tot.leads_funil:0)}</div></div>
     <div class="card"><div class="card-label">Agendamentos</div><div class="card-value">${fmtN(tot.agend)}</div></div>
     <div class="card"><div class="card-label">1ª RM</div><div class="card-value">${fmtN(tot.rm1)}</div></div>
     <div class="card"><div class="card-label">1ª RR</div><div class="card-value">${fmtN(tot.rr1)}</div></div>
@@ -621,9 +622,9 @@ function renderCharts(data) {
   destroyChart('invest');
   chartInstances['invest'] = new Chart(document.getElementById('chart-invest'), { type:'bar', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.invest_total||0)), backgroundColor:'rgba(108,99,255,0.5)', borderColor:COLORS.purple, borderWidth:1 }] }, options:{...baseOpts} });
   destroyChart('leads');
-  chartInstances['leads'] = new Chart(document.getElementById('chart-leads'), { type:'bar', data:{ labels, datasets:[{ data:data.map(r=>r.leads_funil||0), backgroundColor:'rgba(245,158,11,0.5)', borderColor:COLORS.amber, borderWidth:1 }] }, options:{...baseOpts} });
+  chartInstances['leads'] = new Chart(document.getElementById('chart-leads'), { type:'bar', data:{ labels, datasets:[{ data:data.map(r=>r.leads||0), backgroundColor:'rgba(245,158,11,0.5)', borderColor:COLORS.amber, borderWidth:1 }] }, options:{...baseOpts} });
   destroyChart('cpl');
-  chartInstances['cpl'] = new Chart(document.getElementById('chart-cpl'), { type:'line', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.cpl_funil||0)), borderColor:COLORS.red, backgroundColor:'rgba(244,63,94,0.08)', tension:0.4, pointRadius:2 }] }, options:{...baseOpts} });
+  chartInstances['cpl'] = new Chart(document.getElementById('chart-cpl'), { type:'line', data:{ labels, datasets:[{ data:data.map(r=>parseFloat(r.cpl||0)), borderColor:COLORS.red, backgroundColor:'rgba(244,63,94,0.08)', tension:0.4, pointRadius:2 }] }, options:{...baseOpts} });
   destroyChart('imp');
   chartInstances['imp'] = new Chart(document.getElementById('chart-imp'), { type:'line', data:{ labels, datasets:[ { label:'Impressões', data:data.map(r=>r.impressoes||0), borderColor:COLORS.blue, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y' }, { label:'Cliques', data:data.map(r=>r.cliques||0), borderColor:COLORS.green, backgroundColor:'transparent', tension:0.4, pointRadius:2, yAxisID:'y1' } ] }, options:{...baseOpts, plugins:{legend:{display:true,labels:{color:'#8888aa',font:{size:9},boxWidth:8}}}, scales:{...baseOpts.scales, y:{...baseOpts.scales.y,position:'left'}, y1:{...baseOpts.scales.y,position:'right',grid:{display:false}}}} });
 }
@@ -652,12 +653,16 @@ function renderTabela(data) {
     <td class="highlight">${r.data}</td><td class="num">R$ ${fmt(r.invest_total)}</td>
     <td class="num">${fmtN(r.impressoes)}</td><td class="num">${fmtN(r.cliques)}</td>
     <td class="num">${fmt(parseFloat(r.ctr||0)*100)}%</td><td class="num">R$ ${fmt(r.cpm)}</td>
-    <td class="num">R$ ${fmt(r.cpc)}</td><td class="num highlight">${fmtN(r.leads_funil)}</td>
+    <td class="num">R$ ${fmt(r.cpc)}</td><td class="num">${fmtN(r.leads)}</td>
+    <td class="num">R$ ${fmt(r.cpl)}</td>
+    <td class="num">${fmtN(r.leads||0)}</td>
+    <td class="num">R$ ${fmt(r.cpl||0)}</td>
+    <td class="num highlight">${fmtN(r.leads_funil)}</td>
     <td class="num">R$ ${fmt(r.cpl_funil)}</td><td class="num">${fmtN(r.agendando)}</td>
     <td class="num">${fmtN(r.primeira_rm)}</td><td class="num">${fmtN(r.total_primeira_rr)}</td>
     <td class="num">${fmtN(r.segunda_rm)}</td><td class="num">${fmtN(r.segunda_rr_sql2)}</td>
     <td class="num highlight">${fmtN(r.vendas)}</td><td class="num">R$ ${fmt(r.faturamento)}</td>
-    <td class="num">${fmt(r.roas)}x</td></tr>`).join('') || '<tr><td colspan="17" class="empty">Sem dados</td></tr>';
+    <td class="num">${fmt(r.roas)}x</td></tr>`).join('') || '<tr><td colspan="19" class="empty">Sem dados</td></tr>';
 }
 
 // ─── UTMs ────────────────────────────────────────────────
