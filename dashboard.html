@@ -348,6 +348,7 @@ let SUPABASE_TOKEN = null;
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <select id="utm-filter-camp" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todas campanhas</option></select>
             <select id="utm-filter-source" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todos sources</option></select>
+            <select id="utm-filter-anuncio" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todos anúncios</option></select>
             <input type="text" id="utm-search-lead" placeholder="Buscar nome..." oninput="filtrarUTMLeads()" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none;width:130px">
           </div>
         </div>
@@ -777,16 +778,20 @@ function filtrarUTMCamp() {
 function populateUTMFiltros(data) {
   const camps=[...new Set(data.map(d=>d.utm_campaign).filter(Boolean))].sort();
   const sources=[...new Set(data.map(d=>d.utm_source).filter(Boolean))].sort();
+  const anuncios=[...new Set(data.map(d=>d.utm_content).filter(Boolean))].sort();
   document.getElementById('utm-filter-camp').innerHTML='<option value="">Todas campanhas</option>'+camps.map(c=>`<option value="${c}">${c}</option>`).join('');
   document.getElementById('utm-filter-source').innerHTML='<option value="">Todos sources</option>'+sources.map(s=>`<option value="${s}">${s}</option>`).join('');
+  document.getElementById('utm-filter-anuncio').innerHTML='<option value="">Todos anúncios</option>'+anuncios.map(a=>`<option value="${a}">${a}</option>`).join('');
 }
 function filtrarUTMLeads() {
   const camp=document.getElementById('utm-filter-camp').value;
   const source=document.getElementById('utm-filter-source').value;
+  const anuncio=document.getElementById('utm-filter-anuncio').value;
   const q=document.getElementById('utm-search-lead').value.toLowerCase();
   let f=utmData;
   if (camp) f=f.filter(d=>d.utm_campaign===camp);
   if (source) f=f.filter(d=>d.utm_source===source);
+  if (anuncio) f=f.filter(d=>d.utm_content===anuncio);
   if (q) f=f.filter(d=>(d.nome||'').toLowerCase().includes(q));
   renderUTMLeadsTabela(f);
 }
