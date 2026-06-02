@@ -354,7 +354,7 @@ let SUPABASE_TOKEN = null;
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Data</th><th>Nome</th><th>Etapa</th><th>Source</th><th>Medium</th><th>Campaign</th><th>Content</th><th>Term</th></tr></thead>
+            <thead><tr><th>Data / Hora</th><th>Nome</th><th>Etapa</th><th>Source</th><th>Medium</th><th>Campaign</th><th>Content</th><th>Term</th></tr></thead>
             <tbody id="utm-leads-body"><tr><td colspan="8" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
@@ -803,8 +803,16 @@ function renderUTMLeadsPage() {
   const totalPages=Math.max(1,Math.ceil(total/UTM_PAGE_SIZE));
   const start=(utmLeadsPage-1)*UTM_PAGE_SIZE;
   const slice=data.slice(start,start+UTM_PAGE_SIZE);
-  document.getElementById('utm-leads-body').innerHTML=slice.map(d=>`<tr>
-    <td class="highlight">${d.data_entrada?d.data_entrada.slice(0,10):'-'}</td>
+  document.getElementById('utm-leads-body').innerHTML=slice.map(d=>{
+    let dataHora='-';
+    if(d.data_entrada){
+      const dt=new Date(d.data_entrada);
+      const dia=dt.toLocaleDateString('pt-BR');
+      const hora=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      dataHora=`${dia}<span style="color:var(--text3);margin-left:4px">${hora}</span>`;
+    }
+    return `<tr>
+    <td class="highlight">${dataHora}</td>
     <td>${d.nome||'-'}</td>
     <td style="color:var(--text2)">${d.status_funil||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_source||'-'}</td>
@@ -812,7 +820,7 @@ function renderUTMLeadsPage() {
     <td style="color:var(--accent3)">${d.utm_campaign||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_content||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_term||'-'}</td>
-  </tr>`).join('')||'<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
+  </tr>`;}).join('')||'<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
   const pg=document.getElementById('utm-leads-pagination');
   if (!pg) return;
   if (totalPages<=1){pg.innerHTML=`<span class="pg-info">Total: ${total} leads</span>`;return;}
