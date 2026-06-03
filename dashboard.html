@@ -405,19 +405,26 @@ let SUPABASE_TOKEN = null;
       <div class="cards-grid" id="meta-logs-cards" style="margin-bottom:16px"><div class="loading">carregando...</div></div>
       <div class="table-box">
         <div class="table-header">
-          <div class="table-title">Envios para Meta (Conversion API)</div>
+          <div class="table-title">Meta CAPI — pendentes e envios</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <select id="meta-filter-date-type" class="filter-select" onchange="loadMetaLogs()" title="Escolha qual data o período do topo deve filtrar">
+              <option value="all" selected>Todos as Datas</option>
+              <option value="cadastro">Só cadastro CRM</option>
+              <option value="envio">Só data envio</option>
+            </select>
             <select id="meta-filter-status" class="filter-select" onchange="filtrarMetaLogs()">
               <option value="">Todos os status</option>
+              <option value="pending">Pendente</option>
               <option value="success">Sucesso</option>
               <option value="error">Erro</option>
             </select>
-            <input type="text" id="meta-search" placeholder="Buscar nome / id..." oninput="filtrarMetaLogs()" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none;width:160px">
+            <input type="text" id="meta-search" placeholder="Buscar nome, id, email ou conversion..." oninput="filtrarMetaLogs()" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none;width:240px">
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr>
+              <th>Cadastro CRM</th>
               <th>Data Envio</th>
               <th>Nome</th>
               <th>Telefone</th>
@@ -427,7 +434,7 @@ let SUPABASE_TOKEN = null;
               <th>Funil</th>
               <th>Detalhes</th>
             </tr></thead>
-            <tbody id="meta-logs-body"><tr><td colspan="8" class="loading">carregando...</td></tr></tbody>
+            <tbody id="meta-logs-body"><tr><td colspan="9" class="loading">carregando...</td></tr></tbody>
           </table>
         </div>
         <div class="pagination" id="meta-logs-pagination"></div>
@@ -1000,12 +1007,12 @@ async function loadMetaLogs() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
 
-  let params = `order=data_envio_meta.desc.nullslast,criado_em.desc&limit=1000`;
-
-  if (from) params += `&criado_em=gte.${from}T00:00:00`;
-  if (to)   params += `&criado_em=lte.${to}T23:59:59`;
-
-  // só traz leads que já foram enviados para Meta
+  // Carrega os registros Meta sem aplicar a data no Supabase.
+  // O filtro de data é aplicado no front para permitir:
+  // - todos: cadastro CRM OU data envio dentro do período
+  // - cadastro: somente data_entrada
+  // - envio: somente data_envio_meta
+  let params = `order=data_entrada.desc.nullslast,data_envio_meta.desc.nullslast,updated_at.desc.nullslast,criado_em.desc&limit=5000`;
   params += `&meta_response=not.is.null`;
 
   const data = await supaFetch('leads_utm', params);
@@ -1014,41 +1021,92 @@ async function loadMetaLogs() {
     console.error('Erro ao carregar Meta Logs:', data);
     metaLogsData = [];
   } else {
-    metaLogsData = data;
+    metaLogsData = filtrarMetaLogsPorData(data, from, to);
   }
 
   metaLogsPage = 1;
   renderMetaLogsCards(metaLogsData);
-  renderMetaLogsTabela(metaLogsData);
+  renderMetaLogsTabela(getMetaLogsFiltrados());
 }
 
-function filtrarMetaLogs() {
+function getMetaDateFilterMode() {
+  const el = document.getElementById('meta-filter-date-type');
+  return el ? el.value : 'all';
+}
+
+function isDateInSelectedRange(value, from, to) {
+  if (!value) return false;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return false;
+
+  if (from) {
+    const start = new Date(`${from}T00:00:00`);
+    if (d < start) return false;
+  }
+
+  if (to) {
+    const end = new Date(`${to}T23:59:59.999`);
+    if (d > end) return false;
+  }
+
+  return true;
+}
+
+function filtrarMetaLogsPorData(data, from, to) {
+  if (!from && !to) return data;
+
+  const mode = getMetaDateFilterMode();
+
+  return data.filter(l => {
+    const matchCadastro = isDateInSelectedRange(l.data_entrada, from, to);
+    const matchEnvio    = isDateInSelectedRange(l.data_envio_meta, from, to);
+
+    if (mode === 'cadastro') return matchCadastro;
+    if (mode === 'envio')    return matchEnvio;
+    return matchCadastro || matchEnvio;
+  });
+}
+
+function getMetaLogsFiltrados() {
   const status = document.getElementById('meta-filter-status').value.toLowerCase();
   const q      = document.getElementById('meta-search').value.toLowerCase();
-  const filtered = metaLogsData.filter(l => {
+
+  return metaLogsData.filter(l => {
     const matchStatus = !status || (l.status_meta || '').toLowerCase() === status;
     const matchQ = !q
       || (l.nome || '').toLowerCase().includes(q)
       || (l.crm_id || '').toLowerCase().includes(q)
       || (l.email || '').toLowerCase().includes(q)
+      || (l.telefone || '').toLowerCase().includes(q)
       || (l.conversion_id || '').toLowerCase().includes(q);
     return matchStatus && matchQ;
   });
+}
+
+function filtrarMetaLogs() {
   metaLogsPage = 1;
-  renderMetaLogsTabela(filtered);
+  renderMetaLogsTabela(getMetaLogsFiltrados());
 }
 
 function renderMetaLogsCards(data) {
-  const total   = data.length;
-  const success = data.filter(l => (l.status_meta||'').toLowerCase() === 'success').length;
-  const error   = data.filter(l => (l.status_meta||'').toLowerCase() === 'error').length;
-  const pending = data.filter(l => !l.status_meta || !['success','error'].includes((l.status_meta||'').toLowerCase())).length;
-  const taxaSucesso = total > 0 ? ((success / total) * 100).toFixed(1) : '0';
+  const success = data.filter(l => (l.status_meta || '').toLowerCase() === 'success').length;
+  const error   = data.filter(l => (l.status_meta || '').toLowerCase() === 'error').length;
+
+  const pending = data.filter(l => {
+    const status = (l.status_meta || '').toLowerCase();
+    return !status || status === 'pending' || !['success', 'error'].includes(status);
+  }).length;
+
+  const totalProcessados = success + error;
+  const taxaSucesso = totalProcessados > 0
+    ? ((success / totalProcessados) * 100).toFixed(1)
+    : '0';
+
   document.getElementById('meta-logs-cards').innerHTML = `
-    <div class="card accent-purple"><div class="card-label">Total Enviados</div><div class="card-value">${total.toLocaleString('pt-BR')}</div></div>
-    <div class="card accent-green"><div class="card-label">Sucesso</div><div class="card-value">${success.toLocaleString('pt-BR')}</div><div class="card-sub">${taxaSucesso}% do total</div></div>
+    <div class="card accent-amber"><div class="card-label">Pendentes</div><div class="card-value">${pending.toLocaleString('pt-BR')}</div><div class="card-sub">Aguardando conversão</div></div>
+    <div class="card accent-green"><div class="card-label">Sucesso</div><div class="card-value">${success.toLocaleString('pt-BR')}</div><div class="card-sub">${taxaSucesso}% dos processados</div></div>
     <div class="card accent-red"><div class="card-label">Erro</div><div class="card-value">${error.toLocaleString('pt-BR')}</div></div>
-    <div class="card accent-amber"><div class="card-label">Pendente / Outro</div><div class="card-value">${pending.toLocaleString('pt-BR')}</div></div>`;
+    <div class="card accent-purple"><div class="card-label">Processados</div><div class="card-value">${totalProcessados.toLocaleString('pt-BR')}</div><div class="card-sub">Sucesso + erro</div></div>`;
 }
 
 function renderMetaLogsTabela(data) {
@@ -1059,7 +1117,7 @@ function renderMetaLogsTabela(data) {
   const slice = data.slice(start, start + META_LOGS_PER_PAGE);
 
   if (!slice.length) {
-    document.getElementById('meta-logs-body').innerHTML = '<tr><td colspan="8" class="empty">Nenhum envio encontrado no período</td></tr>';
+    document.getElementById('meta-logs-body').innerHTML = '<tr><td colspan="9" class="empty">Nenhum registro encontrado no período</td></tr>';
     document.getElementById('meta-logs-pagination').innerHTML = '';
     return;
   }
@@ -1069,12 +1127,16 @@ function renderMetaLogsTabela(data) {
     const status = (l.status_meta || 'unknown').toLowerCase();
     const badgeClass = ['success','error','pending'].includes(status) ? status : 'unknown';
     const badgeLabel = { success: 'Sucesso', error: 'Erro', pending: 'Pendente' }[status] || status || '—';
-    const dataEnvio  = l.data_envio_meta
-      ? new Date(l.data_envio_meta).toLocaleString('pt-BR')
+    const dataCadastro = l.data_entrada
+      ? new Date(l.data_entrada).toLocaleString('pt-BR')
       : (l.criado_em ? new Date(l.criado_em).toLocaleString('pt-BR') : '—');
+    const dataEnvio = l.data_envio_meta
+      ? new Date(l.data_envio_meta).toLocaleString('pt-BR')
+      : '—';
     const jsonStr = l.meta_response ? JSON.stringify(l.meta_response, null, 2) : null;
     return `
       <tr>
+        <td class="highlight">${dataCadastro}</td>
         <td class="highlight">${dataEnvio}</td>
         <td style="color:var(--text)">${l.nome || '—'}</td>
         <td>${l.telefone || l.whatsapp || '—'}</td>
@@ -1084,7 +1146,7 @@ function renderMetaLogsTabela(data) {
         <td>${l.status_funil || '—'}</td>
         <td>${jsonStr ? `<button class="meta-json-btn" onclick="toggleMetaJson('${rowId}')">ver JSON</button>` : '—'}</td>
       </tr>
-      ${jsonStr ? `<tr id="${rowId}" class="meta-json-row"><td colspan="8"><div class="meta-json-pre">${jsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></td></tr>` : ''}`;
+      ${jsonStr ? `<tr id="${rowId}" class="meta-json-row"><td colspan="9"><div class="meta-json-pre">${jsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></td></tr>` : ''}`;
   }).join('');
 
   // Paginação
@@ -1106,18 +1168,7 @@ function renderMetaLogsTabela(data) {
 
 function metaLogsGoPage(p) {
   metaLogsPage = p;
-  const status = document.getElementById('meta-filter-status').value.toLowerCase();
-  const q      = document.getElementById('meta-search').value.toLowerCase();
-  const filtered = metaLogsData.filter(l => {
-    const matchStatus = !status || (l.status_meta || '').toLowerCase() === status;
-    const matchQ = !q
-      || (l.nome || '').toLowerCase().includes(q)
-      || (l.crm_id || '').toLowerCase().includes(q)
-      || (l.email || '').toLowerCase().includes(q)
-      || (l.conversion_id || '').toLowerCase().includes(q);
-    return matchStatus && matchQ;
-  });
-  renderMetaLogsTabela(filtered);
+  renderMetaLogsTabela(getMetaLogsFiltrados());
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
