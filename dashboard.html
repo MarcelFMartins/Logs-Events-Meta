@@ -1001,13 +1001,22 @@ async function loadMetaLogs() {
   const to   = document.getElementById('date-to').value;
 
   let params = `order=data_envio_meta.desc.nullslast,criado_em.desc&limit=500`;
+
   if (from) params += `&criado_em=gte.${from}T00:00:00`;
   if (to)   params += `&criado_em=lte.${to}T23:59:59`;
+
   // só traz leads que já foram enviados para Meta
   params += `&meta_response=not.is.null`;
 
-  const data = await supaFetch('leads', params);
-  metaLogsData = data || [];
+  const data = await supaFetch('leads_utm', params);
+
+  if (!Array.isArray(data)) {
+    console.error('Erro ao carregar Meta Logs:', data);
+    metaLogsData = [];
+  } else {
+    metaLogsData = data;
+  }
+
   metaLogsPage = 1;
   renderMetaLogsCards(metaLogsData);
   renderMetaLogsTabela(metaLogsData);
