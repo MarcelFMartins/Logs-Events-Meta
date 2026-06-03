@@ -1000,7 +1000,7 @@ async function loadMetaLogs() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
 
-  let params = `order=data_envio_meta.desc.nullslast,criado_em.desc&limit=500`;
+  let params = `order=data_envio_meta.desc.nullslast,criado_em.desc&limit=1000`;
 
   if (from) params += `&criado_em=gte.${from}T00:00:00`;
   if (to)   params += `&criado_em=lte.${to}T23:59:59`;
