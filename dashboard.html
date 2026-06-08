@@ -218,14 +218,426 @@
   .btn-export:active { transform: translateY(0); }
   .btn-export-pdf  { background: var(--accent4); color: #fff; }
   .btn-export-xlsx { background: #1d6f42; color: #fff; }
+
+/* ── AD PREVIEW PANEL ─────────────────────────────────────── */
+#ad-panel-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  animation: ap-fadein 0.15s ease;
+}
+body.light #ad-panel-overlay { background: rgba(17,17,24,0.28); }
+@keyframes ap-fadein { from { opacity:0 } to { opacity:1 } }
+#ad-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 9999;
+  width: 360px; max-width: min(360px, 92vw);
+  background: var(--bg2);
+  color: var(--text);
+  border-left: 1px solid var(--border2);
+  box-shadow: -16px 0 48px rgba(0,0,0,0.6);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.22s cubic-bezier(.4,0,.2,1), background 0.2s, border-color 0.2s, color 0.2s;
+  font-family: var(--mono);
+}
+body.light #ad-panel { box-shadow: -16px 0 48px rgba(0,0,0,0.18); }
+#ad-panel.open { transform: translateX(0); }
+#ad-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#ad-panel-header .ap-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(245,158,11,0.12); color: var(--accent3);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 5px; padding: 2px 8px;
+  font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+}
+#ad-panel-close {
+  background: none; border: none; color: var(--text3);
+  font-size: 20px; cursor: pointer; line-height: 1;
+  padding: 0 2px; transition: color 0.15s;
+}
+#ad-panel-close:hover { color: var(--text); }
+#ad-panel-video-wrap {
+  width: 100%; background: var(--bg3); flex-shrink: 0;
+  position: relative; aspect-ratio: 9/16; max-height: 62vh;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid var(--border);
+}
+#ap-preview-frame,
+#ap-preview-img {
+  width: 100%; height: 100%; border: 0; display: none;
+  background: var(--bg3);
+}
+#ap-preview-frame { min-height: 100%; }
+#ap-preview-img { object-fit: contain; }
+#ad-panel-video-wrap .ap-vid-loading {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; color: var(--text3); font-size: 11px;
+  background: var(--bg3);
+}
+#ad-panel-video-wrap .ap-vid-error {
+  display: none;
+  position: absolute; inset: 0; z-index: 3;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; color: var(--text3); font-size: 11px; text-align: center; padding: 16px;
+  background: var(--bg3);
+}
+.ap-spinner {
+  width: 26px; height: 26px; border: 2px solid var(--border2);
+  border-top-color: var(--accent3); border-radius: 50%;
+  animation: ap-spin 0.75s linear infinite; flex-shrink: 0;
+}
+@keyframes ap-spin { to { transform: rotate(360deg) } }
+#ad-panel-meta {
+  padding: 14px 16px; overflow-y: auto; flex: 1; font-size: 10px; line-height: 1.7;
+}
+#ad-panel-meta .ap-name {
+  color: var(--text); font-size: 12px; font-weight: 500;
+  word-break: break-word; line-height: 1.45; margin-bottom: 10px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+#ad-panel-meta .ap-row { display: flex; gap: 8px; margin-top: 3px; }
+#ad-panel-meta .ap-lbl { color: var(--text3); min-width: 60px; }
+#ad-panel-meta .ap-val { color: var(--text2); word-break: break-word; }
+.table-hint {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text3); font-family: var(--mono); font-size: 10px;
+  line-height: 1.4; letter-spacing: 0.02em;
+}
+.table-hint strong { color: var(--accent3); font-weight: 500; }
+.has-ad-preview {
+  cursor: pointer;
+  text-decoration: underline dotted var(--border2);
+  text-underline-offset: 3px;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.has-ad-preview:hover {
+  color: var(--accent3) !important;
+  text-decoration-color: var(--accent3);
+}
+
+/* ── UTM PREVIEW TIP ───────────────────────────────────── */
+#utm-preview-tip {
+  display: none;
+  position: fixed;
+  top: 68px;
+  right: 16px;
+  z-index: 9997;
+  width: min(360px, calc(100vw - 32px));
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.32);
+  padding: 14px;
+  color: var(--text);
+  font-family: var(--sans);
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+#utm-preview-tip.open {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.utm-tip-close {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+}
+.utm-tip-close:hover { color: var(--text); }
+.utm-tip-title {
+  padding-right: 28px;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+.utm-tip-text {
+  margin: 0 0 12px;
+  color: var(--text2);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.utm-tip-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.utm-tip-btn {
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.utm-tip-btn:hover { border-color: var(--accent); color: var(--accent); }
+.utm-tip-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 </style>
 </head>
 <body>
+
+<!-- AD PREVIEW PANEL -->
+<div id="ad-panel-overlay" onclick="closeAdPanel()"></div>
+<div id="ad-panel">
+  <div id="ad-panel-header">
+    <span class="ap-badge">📢 anúncio</span>
+    <button id="ad-panel-close" onclick="closeAdPanel()" title="Fechar">✕</button>
+  </div>
+  <div id="ad-panel-video-wrap">
+    <div class="ap-vid-loading" id="ap-vid-loading">
+      <div class="ap-spinner"></div>
+      <span>carregando prévia…</span>
+    </div>
+    <div class="ap-vid-error" id="ap-vid-error">
+      <span style="font-size:22px">📢</span>
+      <span id="ap-vid-error-msg">Prévia não disponível</span>
+    </div>
+    <iframe id="ap-preview-frame" title="Prévia do anúncio" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+    <img id="ap-preview-img" alt="Prévia do anúncio" loading="lazy">
+  </div>
+  <div id="ad-panel-meta">
+    <div class="ap-name" id="ap-meta-name"></div>
+    <div class="ap-row"><span class="ap-lbl">campanha</span><span class="ap-val" id="ap-meta-camp"></span></div>
+    <div class="ap-row"><span class="ap-lbl">source</span><span class="ap-val" id="ap-meta-source"></span></div>
+    <div class="ap-row"><span class="ap-lbl">medium</span><span class="ap-val" id="ap-meta-medium"></span></div>
+    <div class="ap-row"><span class="ap-lbl">term</span><span class="ap-val" id="ap-meta-term"></span></div>
+  </div>
+</div>
+
+<!-- UTM PREVIEW TIP -->
+<div id="utm-preview-tip" role="dialog" aria-live="polite" aria-label="Dica da aba UTMs">
+  <button class="utm-tip-close" type="button" onclick="closeUtmPreviewTip(false)" aria-label="Fechar">×</button>
+  <div class="utm-tip-title">Prévia de anúncios disponível</div>
+  <p class="utm-tip-text">Na aba UTMs, clique no nome de um anúncio para abrir o painel lateral com a prévia do criativo.</p>
+  <div class="utm-tip-actions">
+    <button class="utm-tip-btn" type="button" onclick="closeUtmPreviewTip(true)">Não mostrar novamente</button>
+    <button class="utm-tip-btn primary" type="button" onclick="closeUtmPreviewTip(false)">Entendi</button>
+  </div>
+</div>
 
 <script>
 const SUPABASE_URL = 'https://ctbaseoizcjrxthpjxgv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0YmFzZW9pemNqcnh0aHBqeGd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDM1ODAsImV4cCI6MjA5NTUxOTU4MH0.2WOqgci6Mdqt2o5VBU3rP5vZZu39Wo-C5hw95zvXIuo';
 let SUPABASE_TOKEN = null;
+</script>
+
+<script>
+// ── UTILS ────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+// ── AD PREVIEW PANEL ───────────────────────────────────────
+const META_TOKEN  = 'EAAVZA4lLcMV0BRoF3v34ZBCz1JNCpGsNDavvbxAq07055FgazNilllz1643CzrLuMovT2FlU0ZAydsTxSXZAZAZCUlxclZB4JWW5a3ZAkS50EZBnwoie41Q8TQl50BA1ZA2oJSKt51be4j5FGf6uHlIXrZAH232dpYtr1rxFB6KV7ZBFkQYcl5yPoGQnt4uZCZAYhxZBQybrQZDZD';
+const META_ACCOUNT = 'act_1573557056559569';
+const AD_PREVIEW_FORMATS = ['MOBILE_FEED_STANDARD', 'DESKTOP_FEED_STANDARD', 'INSTAGRAM_STANDARD'];
+const adCache = {}; // adName -> Promise | { previewUrl, previewHtml, thumbnail, creativeId, previewFormat } | 'error:*'
+
+function extractAdPreviewUrl(previewHtml) {
+  if (!previewHtml) return null;
+  try {
+    const doc = new DOMParser().parseFromString(previewHtml, 'text/html');
+    const iframe = doc.querySelector('iframe[src]');
+    return iframe ? iframe.src : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function fetchAdPreview(adName) {
+  const cached = adCache[adName];
+  if (cached) return cached instanceof Promise ? await cached : cached;
+
+  const request = (async () => {
+    try {
+      // 1. Find the ad by name → get the creative ID and fallback thumbnail.
+      const q1 = new URLSearchParams({
+        fields: 'name,adcreatives{id,name,thumbnail_url}',
+        filtering: JSON.stringify([{field:'name',operator:'CONTAIN',value:adName.slice(0,40)}]),
+        limit: 10,
+        access_token: META_TOKEN
+      });
+      const r1 = await fetch(`https://graph.facebook.com/v19.0/${META_ACCOUNT}/ads?${q1}`);
+      const j1 = await r1.json();
+      if (j1.error) throw new Error(j1.error.message);
+
+      const ads = (j1.data || []);
+      const ad = ads.find(a => a.name === adName) || ads[0];
+      if (!ad) return 'error:notfound';
+
+      const creatives = ad.adcreatives?.data || [];
+      const creative  = creatives[0];
+      if (!creative?.id) return 'error:nocreative';
+
+      const thumbnail = creative.thumbnail_url || null;
+      let previewHtml = null;
+      let previewUrl = null;
+      let previewFormat = null;
+      let lastPreviewError = null;
+
+      // 2. Ask Meta for an ad preview. This avoids loading/playing the video source directly.
+      for (const format of AD_PREVIEW_FORMATS) {
+        const q2 = new URLSearchParams({
+          ad_format: format,
+          access_token: META_TOKEN
+        });
+        const r2 = await fetch(`https://graph.facebook.com/v19.0/${creative.id}/previews?${q2}`);
+        const j2 = await r2.json();
+        if (j2.error) {
+          lastPreviewError = j2.error.message;
+          continue;
+        }
+        const body = (j2.data || [])[0]?.body || null;
+        if (body) {
+          previewHtml = body;
+          previewUrl = extractAdPreviewUrl(body);
+          previewFormat = format;
+          break;
+        }
+      }
+
+      if (!previewHtml && !thumbnail) {
+        console.warn('[adPanel] preview unavailable:', lastPreviewError || 'sem body de preview');
+        return 'error:nopreview';
+      }
+
+      return { previewUrl, previewHtml, thumbnail, creativeId: creative.id, previewFormat };
+
+    } catch(e) {
+      console.warn('[adPanel]', e);
+      return 'error:' + e.message;
+    }
+  })();
+
+  adCache[adName] = request;
+  const result = await request;
+  adCache[adName] = result;
+  return result;
+}
+
+function resetAdPreviewArea() {
+  const frame   = document.getElementById('ap-preview-frame');
+  const img     = document.getElementById('ap-preview-img');
+  const loading = document.getElementById('ap-vid-loading');
+  const errDiv  = document.getElementById('ap-vid-error');
+
+  frame.style.display = 'none';
+  frame.removeAttribute('src');
+  frame.removeAttribute('srcdoc');
+  img.style.display = 'none';
+  img.removeAttribute('src');
+  loading.style.display = 'flex';
+  errDiv.style.display = 'none';
+}
+
+function renderAdPreview(result) {
+  const frame   = document.getElementById('ap-preview-frame');
+  const img     = document.getElementById('ap-preview-img');
+  const loading = document.getElementById('ap-vid-loading');
+  const errDiv  = document.getElementById('ap-vid-error');
+  const errMsg  = document.getElementById('ap-vid-error-msg');
+
+  loading.style.display = 'none';
+
+  if (!result || typeof result === 'string') {
+    errDiv.style.display = 'flex';
+    errMsg.textContent =
+      result === 'error:notfound'    ? 'Anúncio não encontrado na conta Meta' :
+      result === 'error:nocreative' ? 'Sem criativo associado a este anúncio' :
+      result === 'error:nopreview'  ? 'A Meta não retornou prévia para este criativo' :
+      'Prévia não disponível para este anúncio';
+    return;
+  }
+
+  if (result.previewUrl) {
+    frame.src = result.previewUrl;
+    frame.style.display = 'block';
+    return;
+  }
+
+  if (result.previewHtml) {
+    frame.srcdoc = result.previewHtml;
+    frame.style.display = 'block';
+    return;
+  }
+
+  // Fallback visual only. The official preview is always attempted before the thumbnail.
+  if (result.thumbnail) {
+    img.src = result.thumbnail;
+    img.style.display = 'block';
+    return;
+  }
+
+  errDiv.style.display = 'flex';
+  errMsg.textContent = 'Prévia não disponível para este anúncio';
+}
+
+function openAdPanel(el) {
+  const name   = el.dataset.ad;
+  const camp   = el.dataset.camp  || '-';
+  const source = el.dataset.src   || '-';
+  const medium = el.dataset.med   || '-';
+  const term   = el.dataset.term  || '-';
+
+  if (!name || name === '(sem anúncio)') return;
+
+  document.getElementById('ap-meta-name').textContent   = name;
+  document.getElementById('ap-meta-camp').textContent   = camp;
+  document.getElementById('ap-meta-source').textContent = source;
+  document.getElementById('ap-meta-medium').textContent = medium;
+  document.getElementById('ap-meta-term').textContent   = term;
+
+  resetAdPreviewArea();
+
+  document.getElementById('ad-panel-overlay').style.display = 'block';
+  requestAnimationFrame(() => document.getElementById('ad-panel').classList.add('open'));
+
+  fetchAdPreview(name).then(renderAdPreview);
+}
+
+function closeAdPanel() {
+  const panel = document.getElementById('ad-panel');
+  panel.classList.remove('open');
+  document.getElementById('ad-panel-overlay').style.display = 'none';
+  resetAdPreviewArea();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAdPanel(); });
+
+// delegate click for all [data-ad] elements
+document.addEventListener('mouseover', function(e) {
+  const el = e.target.closest('[data-ad]');
+  if (el && !el.title) el.title = 'Clique para carregar a prévia do anúncio';
+});
+
+document.addEventListener('click', function(e) {
+  const el = e.target.closest('[data-ad]');
+  if (el) openAdPanel(el);
+});
 </script>
 
 <div id="login-screen">
@@ -552,12 +964,35 @@ const savedToken = sessionStorage.getItem('sb_token');
 if (savedToken) { SUPABASE_TOKEN = savedToken; showApp(); }
 setInterval(()=>{ loadAll(); }, 60000);
 
+// ─── UTM PREVIEW TIP ────────────────────────────────────
+function showUtmPreviewTip() {
+  if (localStorage.getItem('utm_preview_tip_hidden') === '1') return;
+  if (sessionStorage.getItem('utm_preview_tip_shown') === '1') return;
+  const tip = document.getElementById('utm-preview-tip');
+  if (!tip) return;
+  sessionStorage.setItem('utm_preview_tip_shown', '1');
+  tip.style.display = 'block';
+  requestAnimationFrame(() => tip.classList.add('open'));
+}
+function closeUtmPreviewTip(dontShowAgain) {
+  const tip = document.getElementById('utm-preview-tip');
+  if (dontShowAgain) localStorage.setItem('utm_preview_tip_hidden', '1');
+  if (!tip) return;
+  tip.classList.remove('open');
+  setTimeout(() => { if (!tip.classList.contains('open')) tip.style.display = 'none'; }, 180);
+}
+
 // ─── NAVIGATION ──────────────────────────────────────────
 function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   if (el) el.classList.add('active');
+  if (name === 'utm') {
+    setTimeout(showUtmPreviewTip, 250);
+  } else {
+    closeUtmPreviewTip(false);
+  }
 }
 
 // ─── DATE PRESETS ────────────────────────────────────────
@@ -735,23 +1170,23 @@ function renderUTMTipoCharts(data) {
   const porAnuncio={};
   for (const d of data){
     const k=d.utm_content||'(sem anúncio)';
-    if (!porAnuncio[k]) porAnuncio[k]={franqueados:0,parceiros:0,campaign:d.utm_campaign||'-',term:d.utm_term||'-'};
+    if (!porAnuncio[k]) porAnuncio[k]={franqueados:0,parceiros:0,campaign:d.utm_campaign||'-',term:d.utm_term||'-',source:d.utm_source||'-',medium:d.utm_medium||'-'};
     if (d.status_funil==='Parceiro Help') porAnuncio[k].parceiros++;
     else porAnuncio[k].franqueados++;
   }
   const anuncioArr=Object.entries(porAnuncio);
-  const topFranq=anuncioArr.filter(([,v])=>v.franqueados>0).sort((a,b)=>b[1].franqueados-a[1].franqueados);
-  const topParc=anuncioArr.filter(([,v])=>v.parceiros>0).sort((a,b)=>b[1].parceiros-a[1].parceiros);
+  const topFranq=anuncioArr.filter(([k,v])=>v.franqueados>0&&k!=='(sem anúncio)').sort((a,b)=>b[1].franqueados-a[1].franqueados);
+  const topParc=anuncioArr.filter(([k,v])=>v.parceiros>0&&k!=='(sem anúncio)').sort((a,b)=>b[1].parceiros-a[1].parceiros);
   document.getElementById('utm-tipo-cards').innerHTML=`
     <div class="card accent-green">
       <div class="card-label">🏆 Top anúncio → Franqueado</div>
-      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topFranq[0]?topFranq[0][0]:'-'}</div>
+      <div class="card-value ${topFranq[0]?'has-ad-preview':''}" ${topFranq[0]?`data-ad="${esc(topFranq[0][0])}" data-camp="${esc(topFranq[0][1].campaign)}" data-src="${esc(topFranq[0][1].source||'-')}" data-med="${esc(topFranq[0][1].medium||'-')}" data-term="${esc(topFranq[0][1].term)}" title="Clique para carregar a prévia do anúncio"`:''} style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topFranq[0]?topFranq[0][0]:'-'}</div>
       <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topFranq[0]?topFranq[0][1].campaign:'-'}</div>
       <div class="card-sub" style="margin-top:4px;color:var(--accent2)">${topFranq[0]?topFranq[0][1].franqueados:0} franqueados</div>
     </div>
     <div class="card accent-purple">
       <div class="card-label">🏆 Top anúncio → Parceiro</div>
-      <div class="card-value" style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topParc[0]?topParc[0][0]:'-'}</div>
+      <div class="card-value ${topParc[0]?'has-ad-preview':''}" ${topParc[0]?`data-ad="${esc(topParc[0][0])}" data-camp="${esc(topParc[0][1].campaign)}" data-src="${esc(topParc[0][1].source||'-')}" data-med="${esc(topParc[0][1].medium||'-')}" data-term="${esc(topParc[0][1].term)}" title="Clique para carregar a prévia do anúncio"`:''} style="font-size:13px;font-family:var(--sans);margin-top:8px;white-space:normal;word-break:break-word;line-height:1.5">${topParc[0]?topParc[0][0]:'-'}</div>
       <div class="card-sub" style="margin-top:6px;white-space:normal;word-break:break-word">${topParc[0]?topParc[0][1].campaign:'-'}</div>
       <div class="card-sub" style="margin-top:4px;color:var(--accent)">${topParc[0]?topParc[0][1].parceiros:0} parceiros</div>
     </div>`;
@@ -763,7 +1198,7 @@ function renderUTMTipoCharts(data) {
   chartInstances['utm-parceiro']=new Chart(document.getElementById('chart-utm-parceiro'),{type:'bar',data:{labels:top8p.map(([k])=>k.length>20?k.slice(0,20)+'…':k),datasets:[{data:top8p.map(([,v])=>v.parceiros),backgroundColor:'rgba(108,99,255,0.4)',borderColor:'#6c63ff',borderWidth:1}]},options:{...baseOpts,indexAxis:'y',scales:{x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#8888aa',font:{size:9}},grid:{display:false}}}}});
   const el=document.getElementById('utm-anuncios-body');
   if (el) el.innerHTML=anuncioArr.sort((a,b)=>(b[1].franqueados+b[1].parceiros)-(a[1].franqueados+a[1].parceiros)).map(([k,v])=>`<tr>
-    <td style="white-space:normal;word-break:break-word;max-width:200px;color:var(--text)">${k}</td>
+    <td class="${k!=='(sem anúncio)'?'has-ad-preview':''}" ${k!=='(sem anúncio)'?`data-ad="${esc(k)}" data-camp="${esc(v.campaign)}" data-src="${esc(v.source||'-')}" data-med="${esc(v.medium||'-')}" data-term="${esc(v.term)}" title="Clique para carregar a prévia do anúncio"`:''} style="white-space:normal;word-break:break-word;max-width:200px;color:var(--text)">${k}</td>
     <td style="white-space:normal;word-break:break-word;max-width:160px;color:var(--accent3)">${v.campaign}</td>
     <td style="color:var(--text2)">${v.term}</td>
     <td class="num highlight">${v.franqueados+v.parceiros}</td>
@@ -822,7 +1257,7 @@ function renderUTMLeadsPage() {
     <td style="color:var(--accent3)">${d.utm_source||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_medium||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_campaign||'-'}</td>
-    <td style="color:var(--accent3)">${d.utm_content||'-'}</td>
+    <td class="${d.utm_content?'has-ad-preview':''}" ${d.utm_content?`data-ad="${esc(d.utm_content)}" data-camp="${esc(d.utm_campaign||'-')}" data-src="${esc(d.utm_source||'-')}" data-med="${esc(d.utm_medium||'-')}" data-term="${esc(d.utm_term||'-')}" title="Clique para carregar a prévia do anúncio"`:''} style="color:var(--accent3)">${d.utm_content||'-'}</td>
     <td style="color:var(--accent3)">${d.utm_term||'-'}</td>
   </tr>`;}).join('')||'<tr><td colspan="8" class="empty">Sem leads no período</td></tr>';
   const pg=document.getElementById('utm-leads-pagination');
