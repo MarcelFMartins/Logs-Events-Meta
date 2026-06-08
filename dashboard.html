@@ -6,6 +6,7 @@
 <link rel="icon" type="image/x-icon" href="icone.png">
 <title>Dashboard de Tráfego</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -111,28 +112,15 @@
   td.num { text-align: right; }
   td.highlight { color: var(--text); }
 
-  /* ── TABELA LEADS UTM ── wrap uniforme em todas as colunas ── */
-  #utm-leads-body td {
-    white-space: normal;
-    word-break: break-word;
-    vertical-align: top;
-    line-height: 1.45;
-  }
-  /* Data: sempre numa linha */
+  /* ── TABELA LEADS UTM ── */
+  #utm-leads-body td { white-space: normal; word-break: break-word; vertical-align: top; line-height: 1.45; }
   #utm-leads-body td:nth-child(1) { min-width: 88px;  white-space: nowrap; }
-  /* Nome */
   #utm-leads-body td:nth-child(2) { min-width: 120px; }
-  /* Etapa */
   #utm-leads-body td:nth-child(3) { min-width: 100px; }
-  /* Source */
   #utm-leads-body td:nth-child(4) { min-width: 50px;  }
-  /* Medium */
   #utm-leads-body td:nth-child(5) { min-width: 55px;  }
-  /* Campaign */
   #utm-leads-body td:nth-child(6) { min-width: 160px; max-width: 220px; }
-  /* Content */
   #utm-leads-body td:nth-child(7) { min-width: 160px; max-width: 220px; }
-  /* Term */
   #utm-leads-body td:nth-child(8) { min-width: 160px; max-width: 220px; }
 
   /* FUNIL */
@@ -209,6 +197,27 @@
   .meta-json-row td { padding: 10px 12px; }
   .meta-json-pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: var(--mono); font-size: 11px; color: var(--text2); white-space: pre-wrap; word-break: break-all; line-height: 1.6; max-height: 260px; overflow-y: auto; }
 
+  /* ── EXPORT BUTTON GROUP ── */
+  .export-group { display: flex; gap: 5px; align-items: center; }
+  .btn-export {
+    padding: 5px 11px;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.18s, transform 0.12s;
+    letter-spacing: 0.03em;
+  }
+  .btn-export:hover  { opacity: 0.82; transform: translateY(-1px); }
+  .btn-export:active { transform: translateY(0); }
+  .btn-export-pdf  { background: var(--accent4); color: #fff; }
+  .btn-export-xlsx { background: #1d6f42; color: #fff; }
 </style>
 </head>
 <body>
@@ -221,11 +230,11 @@ let SUPABASE_TOKEN = null;
 
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">▸ Dashboard</div>
+    <div class="login-logo">&#9654; Dashboard</div>
     <div class="login-title">Acesso restrito</div>
     <div class="login-sub">Entre com suas credenciais para continuar</div>
     <div class="field"><label>Email</label><input type="email" id="login-user" placeholder="seu@email.com" autocomplete="email"/></div>
-    <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"/></div>
     <button class="btn-login" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-error">Email ou senha incorretos</div>
   </div>
@@ -233,7 +242,7 @@ let SUPABASE_TOKEN = null;
 
 <div id="app">
   <div class="topbar">
-    <div class="topbar-logo">▸ Tráfego</div>
+    <div class="topbar-logo">&#9654; Tráfego</div>
     <div class="topbar-sep"></div>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('metricas',this)">Métricas</button>
@@ -342,6 +351,8 @@ let SUPABASE_TOKEN = null;
           </table>
         </div>
       </div>
+
+      <!-- LEADS INDIVIDUAIS -->
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Leads individuais</div>
@@ -350,7 +361,17 @@ let SUPABASE_TOKEN = null;
             <select id="utm-filter-anuncio" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todos anúncios</option></select>
             <select id="utm-filter-source" class="filter-select" onchange="filtrarUTMLeads()"><option value="">Todos sources</option></select>
             <input type="text" id="utm-search-lead" placeholder="Buscar nome..." oninput="filtrarUTMLeads()" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;font-family:var(--mono);outline:none;width:130px">
-            <button onclick="exportarLeadsPDF()" style="padding:5px 10px;background:var(--accent4);border:none;border-radius:6px;color:#fff;font-size:11px;font-family:var(--mono);cursor:pointer;white-space:nowrap;transition:opacity 0.2s" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">&#8595; PDF</button>
+            <!-- Botões de exportação -->
+            <div class="export-group">
+              <button class="btn-export btn-export-pdf"  onclick="exportarLeadsPDF()"  title="Exportar como PDF (abre janela de impressão)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PDF
+              </button>
+              <button class="btn-export btn-export-xlsx" onclick="exportarLeadsXLSX()" title="Exportar como planilha Excel (.xlsx)">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                XLSX
+              </button>
+            </div>
           </div>
         </div>
         <div class="table-wrap">
@@ -366,26 +387,18 @@ let SUPABASE_TOKEN = null;
     <!-- EVENTOS META -->
     <div id="page-eventos" class="page">
       <div id="eventos-debug" style="display:none;margin-bottom:12px;padding:10px 14px;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.3);border-radius:8px;font-family:var(--mono);font-size:11px;color:var(--accent);line-height:1.6"></div>
-
-      <!-- ENGAJAMENTO BREAKDOWN -->
-      <div class="eventos-section-title">▸ Engajamento (page_engagement · post_engagement)</div>
+      <div class="eventos-section-title">&#9658; Engajamento (page_engagement &middot; post_engagement)</div>
       <div class="eventos-breakdown-grid" id="eventos-engagement-cards"></div>
       <hr class="ev-section-divider">
-
-      <!-- OUTROS EVENTOS -->
-      <div class="eventos-section-title">▸ Todos os eventos — detalhado</div>
+      <div class="eventos-section-title">&#9658; Todos os eventos &mdash; detalhado</div>
       <div class="eventos-breakdown-grid" id="eventos-all-cards"><div class="loading">carregando...</div></div>
       <hr class="ev-section-divider">
-
-      <!-- GRÁFICO BAR -->
       <div class="charts-grid">
         <div class="chart-box" style="grid-column:1/-1">
           <div class="chart-title">Top eventos por volume</div>
           <div class="chart-wrap" style="height:240px"><canvas id="chart-eventos-bar"></canvas></div>
         </div>
       </div>
-
-      <!-- TABELA DETALHADA -->
       <div class="table-box">
         <div class="table-header">
           <div class="table-title">Todos os eventos</div>
@@ -405,7 +418,7 @@ let SUPABASE_TOKEN = null;
       <div class="cards-grid" id="meta-logs-cards" style="margin-bottom:16px"><div class="loading">carregando...</div></div>
       <div class="table-box">
         <div class="table-header">
-          <div class="table-title">Meta CAPI — pendentes e envios</div>
+          <div class="table-title">Meta CAPI &mdash; pendentes e envios</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <select id="meta-filter-date-type" class="filter-select" onchange="loadMetaLogs()" title="Escolha qual data o período do topo deve filtrar">
               <option value="all" selected>Todos as Datas</option>
@@ -424,15 +437,8 @@ let SUPABASE_TOKEN = null;
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Cadastro CRM</th>
-              <th>Data Envio</th>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>Email</th>
-              <th>Status Meta</th>
-              <th>Conversion ID</th>
-              <th>Funil</th>
-              <th>Detalhes</th>
+              <th>Cadastro CRM</th><th>Data Envio</th><th>Nome</th><th>Telefone</th><th>Email</th>
+              <th>Status Meta</th><th>Conversion ID</th><th>Funil</th><th>Detalhes</th>
             </tr></thead>
             <tbody id="meta-logs-body"><tr><td colspan="9" class="loading">carregando...</td></tr></tbody>
           </table>
@@ -460,13 +466,8 @@ let SUPABASE_TOKEN = null;
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Data / Hora</th>
-              <th>Workflow</th>
-              <th>Status</th>
-              <th>Processados</th>
-              <th>Atualizados</th>
-              <th>Erros</th>
-              <th>Duração</th>
+              <th>Data / Hora</th><th>Workflow</th><th>Status</th>
+              <th>Processados</th><th>Atualizados</th><th>Erros</th><th>Duração</th>
             </tr></thead>
             <tbody id="n8n-logs-body"><tr><td colspan="7" class="loading">carregando...</td></tr></tbody>
           </table>
@@ -847,20 +848,13 @@ let eventosData=[];
 async function loadEventos() {
   const from=document.getElementById('date-from').value, to=document.getElementById('date-to').value;
   if (!from||!to) return;
-
   const AD_ACCOUNT = 'act_1573557056559569';
   const TOKEN = 'EAAVZA4lLcMV0BRoF3v34ZBCz1JNCpGsNDavvbxAq07055FgazNilllz1643CzrLuMovT2FlU0ZAydsTxSXZAZAZCUlxclZB4JWW5a3ZAkS50EZBnwoie41Q8TQl50BA1ZA2oJSKt51be4j5FGf6uHlIXrZAH232dpYtr1rxFB6KV7ZBFkQYcl5yPoGQnt4uZCZAYhxZBQybrQZDZD';
-
-  // Build date range — Meta API level=day so we get per-day breakdown
   const params = new URLSearchParams({
     fields: 'date_start,date_stop,actions',
     time_range: JSON.stringify({since: from, until: to}),
-    time_increment: 1,
-    level: 'account',
-    limit: 1,
-    access_token: TOKEN
+    time_increment: 1, level: 'account', limit: 1, access_token: TOKEN
   });
-
   let raw = [];
   try {
     const res = await fetch(`https://graph.facebook.com/v19.0/${AD_ACCOUNT}/insights?${params}`);
@@ -868,24 +862,14 @@ async function loadEventos() {
     if (json.error) { console.error('[META]', json.error); }
     raw = json.data || [];
   } catch(e) { console.error('[META fetch]', e); }
-
-  // Explode actions array into flat rows
   eventosData = [];
   for (const day of raw) {
     for (const action of (day.actions || [])) {
-      eventosData.push({
-        evento:          action.action_type,
-        total_eventos:   parseInt(action.value || 0),
-        data_referencia: day.date_start,
-        integracao:      'API Meta',
-        status:          'ativo'
-      });
+      eventosData.push({ evento: action.action_type, total_eventos: parseInt(action.value || 0), data_referencia: day.date_start, integracao: 'API Meta', status: 'ativo' });
     }
   }
-
   const _de=document.getElementById('eventos-debug');
   if(_de) _de.style.display='none';
-
   renderEventos(eventosData);
 }
 function filtrarEventos() {
@@ -893,104 +877,28 @@ function filtrarEventos() {
   renderEventosTabela(eventosData.filter(e=>e.evento.toLowerCase().includes(q)));
 }
 function renderEventos(data) {
-  // Aggregate by event name
   const agregado={};
   for (const e of data){agregado[e.evento]=(agregado[e.evento]||0)+(e.total_eventos||0);}
-
   const total=Object.values(agregado).reduce((a,b)=>a+b,0);
   const allSorted=Object.entries(agregado).sort((a,b)=>b[1]-a[1]);
-
-  // ── Color mapping per event ──
-  const colorMap={
-    page_engagement:'highlight-blue',
-    post_engagement:'highlight-blue',
-    lead:'highlight-green',
-    landing_page_view:'highlight-green',
-    link_click:'highlight-amber',
-    video_view:'highlight-amber',
-    post_reaction:'highlight-amber',
-    purchase:'highlight-red',
-    initiate_checkout:'highlight-red',
-    add_to_cart:'highlight-red',
-  };
-  const labelMap={
-    lead:'Lead',link_click:'Clique no link',landing_page_view:'Landing page view',
-    video_view:'Visualização vídeo',page_engagement:'Page engagement',
-    post_reaction:'Reação',post_engagement:'Post engagement',
-    purchase:'Compra',initiate_checkout:'Checkout',add_to_cart:'Add ao carrinho',
-  };
-
+  const colorMap={page_engagement:'highlight-blue',post_engagement:'highlight-blue',lead:'highlight-green',landing_page_view:'highlight-green',link_click:'highlight-amber',video_view:'highlight-amber',post_reaction:'highlight-amber',purchase:'highlight-red',initiate_checkout:'highlight-red',add_to_cart:'highlight-red'};
+  const labelMap={lead:'Lead',link_click:'Clique no link',landing_page_view:'Landing page view',video_view:'Visualização vídeo',page_engagement:'Page engagement',post_reaction:'Reação',post_engagement:'Post engagement',purchase:'Compra',initiate_checkout:'Checkout',add_to_cart:'Add ao carrinho'};
   function evLabel(k){ return labelMap[k]||k.replace(/onsite_conversion\.|offsite_conversion\./g,'').replace(/_/g,' '); }
   function evColor(k){ return colorMap[k]||''; }
-
   function makeCard(k,v){
     const pct=total>0?((v/total)*100).toFixed(1):'0';
     const cls=evColor(k);
-    return `<div class="ev-card ${cls}">
-      <div class="ev-card-label" title="${k}">${evLabel(k)}</div>
-      <div class="ev-card-value">${v.toLocaleString('pt-BR')}</div>
-      <div class="ev-card-pct">${pct}% do total</div>
-    </div>`;
+    return `<div class="ev-card ${cls}"><div class="ev-card-label" title="${k}">${evLabel(k)}</div><div class="ev-card-value">${v.toLocaleString('pt-BR')}</div><div class="ev-card-pct">${pct}% do total</div></div>`;
   }
-
-  // ── Section 1: Engagement-type events ──
   const engagementKeys=['page_engagement','post_engagement'];
-  const engCards=engagementKeys
-    .filter(k=>agregado[k]!==undefined)
-    .map(k=>makeCard(k,agregado[k]));
-  // Add sub-events that contain "engagement" in their name (beyond the two above)
-  const extraEng=allSorted
-    .filter(([k])=>k.includes('engagement')&&!engagementKeys.includes(k))
-    .map(([k,v])=>makeCard(k,v));
-  document.getElementById('eventos-engagement-cards').innerHTML=
-    (engCards.concat(extraEng)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem dados de engajamento</div>';
-
-  // ── Section 2: ALL events cards (sorted by volume) ──
-  document.getElementById('eventos-all-cards').innerHTML=
-    allSorted.map(([k,v])=>makeCard(k,v)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem eventos</div>';
-
-  // ── Bar chart: top 10 ──
+  const engCards=engagementKeys.filter(k=>agregado[k]!==undefined).map(k=>makeCard(k,agregado[k]));
+  const extraEng=allSorted.filter(([k])=>k.includes('engagement')&&!engagementKeys.includes(k)).map(([k,v])=>makeCard(k,v));
+  document.getElementById('eventos-engagement-cards').innerHTML=(engCards.concat(extraEng)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem dados de engajamento</div>';
+  document.getElementById('eventos-all-cards').innerHTML=allSorted.map(([k,v])=>makeCard(k,v)).join('')||'<div style="color:var(--text3);font-family:var(--mono);font-size:12px">Sem eventos</div>';
   const top10=allSorted.slice(0,10);
   destroyChart('eventos-bar');
   document.getElementById('chart-eventos-bar').parentElement.style.height=Math.max(260,top10.length*36+60)+'px';
-  chartInstances['eventos-bar']=new Chart(document.getElementById('chart-eventos-bar'),{
-    type:'bar',
-    data:{
-      labels:top10.map(([k])=>evLabel(k)),
-      datasets:[{
-        data:top10.map(([,v])=>v),
-        backgroundColor:top10.map(([k])=>{
-          const c=evColor(k);
-          if(c==='highlight-blue') return 'rgba(108,99,255,0.55)';
-          if(c==='highlight-green') return 'rgba(74,222,128,0.45)';
-          if(c==='highlight-amber') return 'rgba(245,158,11,0.45)';
-          if(c==='highlight-red') return 'rgba(244,63,94,0.45)';
-          return 'rgba(108,99,255,0.4)';
-        }),
-        borderColor:top10.map(([k])=>{
-          const c=evColor(k);
-          if(c==='highlight-blue') return '#6c63ff';
-          if(c==='highlight-green') return '#4ade80';
-          if(c==='highlight-amber') return '#f59e0b';
-          if(c==='highlight-red') return '#f43f5e';
-          return '#6c63ff';
-        }),
-        borderWidth:1
-      }]
-    },
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('pt-BR')}}
-      },
-      scales:{
-        x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
-        y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}}
-      }
-    }
-  });
-
+  chartInstances['eventos-bar']=new Chart(document.getElementById('chart-eventos-bar'),{type:'bar',data:{labels:top10.map(([k])=>evLabel(k)),datasets:[{data:top10.map(([,v])=>v),backgroundColor:top10.map(([k])=>{const c=evColor(k);if(c==='highlight-blue')return 'rgba(108,99,255,0.55)';if(c==='highlight-green')return 'rgba(74,222,128,0.45)';if(c==='highlight-amber')return 'rgba(245,158,11,0.45)';if(c==='highlight-red')return 'rgba(244,63,94,0.45)';return 'rgba(108,99,255,0.4)';}),borderColor:top10.map(([k])=>{const c=evColor(k);if(c==='highlight-blue')return '#6c63ff';if(c==='highlight-green')return '#4ade80';if(c==='highlight-amber')return '#f59e0b';if(c==='highlight-red')return '#f43f5e';return '#6c63ff';}),borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw.toLocaleString('pt-BR')}}},scales:{x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#8888aa',font:{size:10}},grid:{display:false}}}}});
   renderEventosTabela(data);
 }
 function renderEventosTabela(data) {
@@ -1006,219 +914,113 @@ const META_LOGS_PER_PAGE = 50;
 async function loadMetaLogs() {
   const from = document.getElementById('date-from').value;
   const to   = document.getElementById('date-to').value;
-
-  // Carrega os registros Meta sem aplicar a data no Supabase.
-  // O filtro de data é aplicado no front para permitir:
-  // - todos: cadastro CRM OU data envio dentro do período
-  // - cadastro: somente data_entrada
-  // - envio: somente data_envio_meta
-  let params = `order=data_entrada.desc.nullslast,data_envio_meta.desc.nullslast,updated_at.desc.nullslast,criado_em.desc&limit=5000`;
-  params += `&meta_response=not.is.null`;
-
+  let params = `order=data_entrada.desc.nullslast,data_envio_meta.desc.nullslast,updated_at.desc.nullslast,criado_em.desc&limit=5000&meta_response=not.is.null`;
   const data = await supaFetch('leads_utm', params);
-
-  if (!Array.isArray(data)) {
-    console.error('Erro ao carregar Meta Logs:', data);
-    metaLogsData = [];
-  } else {
-    metaLogsData = filtrarMetaLogsPorData(data, from, to);
-  }
-
+  if (!Array.isArray(data)) { metaLogsData = []; } else { metaLogsData = filtrarMetaLogsPorData(data, from, to); }
   metaLogsPage = 1;
   renderMetaLogsCards(metaLogsData);
   renderMetaLogsTabela(getMetaLogsFiltrados());
 }
-
-function getMetaDateFilterMode() {
-  const el = document.getElementById('meta-filter-date-type');
-  return el ? el.value : 'all';
-}
-
+function getMetaDateFilterMode() { const el = document.getElementById('meta-filter-date-type'); return el ? el.value : 'all'; }
 function isDateInSelectedRange(value, from, to) {
   if (!value) return false;
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return false;
-
-  if (from) {
-    const start = new Date(`${from}T00:00:00`);
-    if (d < start) return false;
-  }
-
-  if (to) {
-    const end = new Date(`${to}T23:59:59.999`);
-    if (d > end) return false;
-  }
-
+  if (from) { const start = new Date(`${from}T00:00:00`); if (d < start) return false; }
+  if (to)   { const end   = new Date(`${to}T23:59:59.999`); if (d > end) return false; }
   return true;
 }
-
 function filtrarMetaLogsPorData(data, from, to) {
   if (!from && !to) return data;
-
   const mode = getMetaDateFilterMode();
-
   return data.filter(l => {
     const matchCadastro = isDateInSelectedRange(l.data_entrada, from, to);
     const matchEnvio    = isDateInSelectedRange(l.data_envio_meta, from, to);
-
     if (mode === 'cadastro') return matchCadastro;
     if (mode === 'envio')    return matchEnvio;
     return matchCadastro || matchEnvio;
   });
 }
-
 function getMetaLogsFiltrados() {
   const status = document.getElementById('meta-filter-status').value.toLowerCase();
   const q      = document.getElementById('meta-search').value.toLowerCase();
-
   return metaLogsData.filter(l => {
     const matchStatus = !status || (l.status_meta || '').toLowerCase() === status;
-    const matchQ = !q
-      || (l.nome || '').toLowerCase().includes(q)
-      || (l.crm_id || '').toLowerCase().includes(q)
-      || (l.email || '').toLowerCase().includes(q)
-      || (l.telefone || '').toLowerCase().includes(q)
-      || (l.conversion_id || '').toLowerCase().includes(q);
+    const matchQ = !q || (l.nome||'').toLowerCase().includes(q) || (l.crm_id||'').toLowerCase().includes(q) || (l.email||'').toLowerCase().includes(q) || (l.telefone||'').toLowerCase().includes(q) || (l.conversion_id||'').toLowerCase().includes(q);
     return matchStatus && matchQ;
   });
 }
-
-function filtrarMetaLogs() {
-  metaLogsPage = 1;
-  renderMetaLogsTabela(getMetaLogsFiltrados());
-}
-
+function filtrarMetaLogs() { metaLogsPage = 1; renderMetaLogsTabela(getMetaLogsFiltrados()); }
 function renderMetaLogsCards(data) {
   const success = data.filter(l => (l.status_meta || '').toLowerCase() === 'success').length;
   const error   = data.filter(l => (l.status_meta || '').toLowerCase() === 'error').length;
-
-  const pending = data.filter(l => {
-    const status = (l.status_meta || '').toLowerCase();
-    return !status || status === 'pending' || !['success', 'error'].includes(status);
-  }).length;
-
+  const pending = data.filter(l => { const s=(l.status_meta||'').toLowerCase(); return !s||s==='pending'||!['success','error'].includes(s); }).length;
   const totalProcessados = success + error;
-  const taxaSucesso = totalProcessados > 0
-    ? ((success / totalProcessados) * 100).toFixed(1)
-    : '0';
-
+  const taxaSucesso = totalProcessados > 0 ? ((success / totalProcessados) * 100).toFixed(1) : '0';
   document.getElementById('meta-logs-cards').innerHTML = `
     <div class="card accent-amber"><div class="card-label">Pendentes</div><div class="card-value">${pending.toLocaleString('pt-BR')}</div><div class="card-sub">Aguardando conversão</div></div>
     <div class="card accent-green"><div class="card-label">Sucesso</div><div class="card-value">${success.toLocaleString('pt-BR')}</div><div class="card-sub">${taxaSucesso}% dos processados</div></div>
     <div class="card accent-red"><div class="card-label">Erro</div><div class="card-value">${error.toLocaleString('pt-BR')}</div></div>
     <div class="card accent-purple"><div class="card-label">Processados</div><div class="card-value">${totalProcessados.toLocaleString('pt-BR')}</div><div class="card-sub">Sucesso + erro</div></div>`;
 }
-
 function renderMetaLogsTabela(data) {
   const total = data.length;
   const totalPages = Math.max(1, Math.ceil(total / META_LOGS_PER_PAGE));
   if (metaLogsPage > totalPages) metaLogsPage = totalPages;
   const start = (metaLogsPage - 1) * META_LOGS_PER_PAGE;
   const slice = data.slice(start, start + META_LOGS_PER_PAGE);
-
-  if (!slice.length) {
-    document.getElementById('meta-logs-body').innerHTML = '<tr><td colspan="9" class="empty">Nenhum registro encontrado no período</td></tr>';
-    document.getElementById('meta-logs-pagination').innerHTML = '';
-    return;
-  }
-
+  if (!slice.length) { document.getElementById('meta-logs-body').innerHTML='<tr><td colspan="9" class="empty">Nenhum registro encontrado no período</td></tr>'; document.getElementById('meta-logs-pagination').innerHTML=''; return; }
   document.getElementById('meta-logs-body').innerHTML = slice.map((l, i) => {
     const rowId  = `ml-${start + i}`;
     const status = (l.status_meta || 'unknown').toLowerCase();
     const badgeClass = ['success','error','pending'].includes(status) ? status : 'unknown';
     const badgeLabel = { success: 'Sucesso', error: 'Erro', pending: 'Pendente' }[status] || status || '—';
-    const dataCadastro = l.data_entrada
-      ? new Date(l.data_entrada).toLocaleString('pt-BR')
-      : (l.criado_em ? new Date(l.criado_em).toLocaleString('pt-BR') : '—');
-    const dataEnvio = l.data_envio_meta
-      ? new Date(l.data_envio_meta).toLocaleString('pt-BR')
-      : '—';
+    const dataCadastro = l.data_entrada ? new Date(l.data_entrada).toLocaleString('pt-BR') : (l.criado_em ? new Date(l.criado_em).toLocaleString('pt-BR') : '—');
+    const dataEnvio = l.data_envio_meta ? new Date(l.data_envio_meta).toLocaleString('pt-BR') : '—';
     const jsonStr = l.meta_response ? JSON.stringify(l.meta_response, null, 2) : null;
-    return `
-      <tr>
-        <td class="highlight">${dataCadastro}</td>
-        <td class="highlight">${dataEnvio}</td>
-        <td style="color:var(--text)">${l.nome || '—'}</td>
-        <td>${l.telefone || l.whatsapp || '—'}</td>
-        <td>${l.email || '—'}</td>
-        <td><span class="meta-badge ${badgeClass}">${badgeLabel}</span></td>
-        <td style="color:var(--text3);font-size:10px">${l.conversion_id || '—'}</td>
-        <td>${l.status_funil || '—'}</td>
-        <td>${jsonStr ? `<button class="meta-json-btn" onclick="toggleMetaJson('${rowId}')">ver JSON</button>` : '—'}</td>
-      </tr>
-      ${jsonStr ? `<tr id="${rowId}" class="meta-json-row"><td colspan="9"><div class="meta-json-pre">${jsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></td></tr>` : ''}`;
+    return `<tr>
+      <td class="highlight">${dataCadastro}</td><td class="highlight">${dataEnvio}</td>
+      <td style="color:var(--text)">${l.nome || '—'}</td><td>${l.telefone || l.whatsapp || '—'}</td><td>${l.email || '—'}</td>
+      <td><span class="meta-badge ${badgeClass}">${badgeLabel}</span></td>
+      <td style="color:var(--text3);font-size:10px">${l.conversion_id || '—'}</td>
+      <td>${l.status_funil || '—'}</td>
+      <td>${jsonStr ? `<button class="meta-json-btn" onclick="toggleMetaJson('${rowId}')">ver JSON</button>` : '—'}</td>
+    </tr>${jsonStr ? `<tr id="${rowId}" class="meta-json-row"><td colspan="9"><div class="meta-json-pre">${jsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></td></tr>` : ''}`;
   }).join('');
-
-  // Paginação
   const pg = document.getElementById('meta-logs-pagination');
   if (totalPages <= 1) { pg.innerHTML = ''; return; }
   let html = `<button class="pg-btn" onclick="metaLogsGoPage(${metaLogsPage-1})" ${metaLogsPage===1?'disabled':''}>‹</button>`;
-  const range = 2;
   for (let p = 1; p <= totalPages; p++) {
-    if (p === 1 || p === totalPages || (p >= metaLogsPage - range && p <= metaLogsPage + range)) {
-      html += `<button class="pg-btn ${p===metaLogsPage?'active':''}" onclick="metaLogsGoPage(${p})">${p}</button>`;
-    } else if (p === metaLogsPage - range - 1 || p === metaLogsPage + range + 1) {
-      html += `<span style="color:var(--text3);padding:0 2px;font-family:var(--mono);font-size:11px">…</span>`;
-    }
+    if (p === 1 || p === totalPages || (p >= metaLogsPage - 2 && p <= metaLogsPage + 2)) html += `<button class="pg-btn ${p===metaLogsPage?'active':''}" onclick="metaLogsGoPage(${p})">${p}</button>`;
+    else if (p === metaLogsPage - 3 || p === metaLogsPage + 3) html += `<span style="color:var(--text3);padding:0 2px;font-family:var(--mono);font-size:11px">…</span>`;
   }
-  html += `<button class="pg-btn" onclick="metaLogsGoPage(${metaLogsPage+1})" ${metaLogsPage===totalPages?'disabled':''}>›</button>`;
-  html += `<span class="pg-info">${total} registros</span>`;
+  html += `<button class="pg-btn" onclick="metaLogsGoPage(${metaLogsPage+1})" ${metaLogsPage===totalPages?'disabled':''}>›</button><span class="pg-info">${total} registros</span>`;
   pg.innerHTML = html;
 }
-
-function metaLogsGoPage(p) {
-  metaLogsPage = p;
-  renderMetaLogsTabela(getMetaLogsFiltrados());
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function toggleMetaJson(rowId) {
-  const row = document.getElementById(rowId);
-  if (!row) return;
-  const visible = row.style.display === 'table-row';
-  row.style.display = visible ? 'none' : 'table-row';
-}
-
+function metaLogsGoPage(p) { metaLogsPage = p; renderMetaLogsTabela(getMetaLogsFiltrados()); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function toggleMetaJson(rowId) { const row = document.getElementById(rowId); if (!row) return; row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row'; }
 
 // ─── N8N LOGS ────────────────────────────────────────────
 let n8nLogsData = [];
 let n8nLogsPage = 1;
 const N8N_LOGS_PER_PAGE = 50;
-
 async function loadLogs() {
   const logs = await supaFetch('logs_execucao', 'order=criado_em.desc&limit=500');
-  n8nLogsData = logs || [];
-  n8nLogsPage = 1;
-  renderN8nLogsCards(n8nLogsData);
-  renderN8nLogsTabela(n8nLogsData);
+  n8nLogsData = logs || []; n8nLogsPage = 1;
+  renderN8nLogsCards(n8nLogsData); renderN8nLogsTabela(n8nLogsData);
 }
-
 function filtrarN8nLogs() {
   const status = document.getElementById('n8n-filter-status').value.toLowerCase();
   const q      = document.getElementById('n8n-search').value.toLowerCase();
-  const filtered = n8nLogsData.filter(l => {
-    const matchStatus = !status || (l.status || '').toLowerCase() === status;
-    const matchQ = !q || (l.workflow || '').toLowerCase().includes(q);
-    return matchStatus && matchQ;
-  });
-  n8nLogsPage = 1;
-  renderN8nLogsTabela(filtered);
+  const filtered = n8nLogsData.filter(l => (!status||(l.status||'').toLowerCase()===status) && (!q||(l.workflow||'').toLowerCase().includes(q)));
+  n8nLogsPage = 1; renderN8nLogsTabela(filtered);
 }
-
 function renderN8nLogsCards(data) {
-  const total   = data.length;
-  const sucesso = data.filter(l => (l.status||'').toLowerCase() === 'sucesso').length;
-  const erro    = data.filter(l => (l.status||'').toLowerCase() === 'erro').length;
-  const parcial = data.filter(l => (l.status||'').toLowerCase() === 'parcial').length;
-  const totalProc = data.reduce((a, l) => a + (l.linhas_processadas || 0), 0);
-  const totalAtual = data.reduce((a, l) => a + (l.linhas_atualizadas || 0), 0);
-  const totalErros = data.reduce((a, l) => a + (l.erros || 0), 0);
-  const avgDur = total > 0
-    ? (data.reduce((a, l) => a + (l.duracao_ms || 0), 0) / total).toFixed(0)
-    : 0;
-  const taxaSucesso = total > 0 ? ((sucesso / total) * 100).toFixed(1) : '0';
-
-  document.getElementById('n8n-logs-cards').innerHTML = `
+  const total=data.length, sucesso=data.filter(l=>(l.status||'').toLowerCase()==='sucesso').length, erro=data.filter(l=>(l.status||'').toLowerCase()==='erro').length, parcial=data.filter(l=>(l.status||'').toLowerCase()==='parcial').length;
+  const totalProc=data.reduce((a,l)=>a+(l.linhas_processadas||0),0), totalAtual=data.reduce((a,l)=>a+(l.linhas_atualizadas||0),0), totalErros=data.reduce((a,l)=>a+(l.erros||0),0);
+  const avgDur=total>0?(data.reduce((a,l)=>a+(l.duracao_ms||0),0)/total).toFixed(0):0;
+  const taxaSucesso=total>0?((sucesso/total)*100).toFixed(1):'0';
+  document.getElementById('n8n-logs-cards').innerHTML=`
     <div class="card accent-purple"><div class="card-label">Total Execuções</div><div class="card-value">${total.toLocaleString('pt-BR')}</div></div>
     <div class="card accent-green"><div class="card-label">Sucesso</div><div class="card-value">${sucesso.toLocaleString('pt-BR')}</div><div class="card-sub">${taxaSucesso}% do total</div></div>
     <div class="card accent-red"><div class="card-label">Erro</div><div class="card-value">${erro.toLocaleString('pt-BR')}</div></div>
@@ -1228,87 +1030,76 @@ function renderN8nLogsCards(data) {
     <div class="card accent-red"><div class="card-label">Total Erros</div><div class="card-value">${totalErros.toLocaleString('pt-BR')}</div></div>
     <div class="card"><div class="card-label">Duração Média</div><div class="card-value">${Number(avgDur).toLocaleString('pt-BR')}ms</div></div>`;
 }
-
 function renderN8nLogsTabela(data) {
-  const total = data.length;
-  const totalPages = Math.max(1, Math.ceil(total / N8N_LOGS_PER_PAGE));
+  const total=data.length, totalPages=Math.max(1,Math.ceil(total/N8N_LOGS_PER_PAGE));
   if (n8nLogsPage > totalPages) n8nLogsPage = totalPages;
-  const start = (n8nLogsPage - 1) * N8N_LOGS_PER_PAGE;
-  const slice = data.slice(start, start + N8N_LOGS_PER_PAGE);
-
-  if (!slice.length) {
-    document.getElementById('n8n-logs-body').innerHTML = '<tr><td colspan="7" class="empty">Nenhuma execução registrada ainda.</td></tr>';
-    document.getElementById('n8n-logs-pagination').innerHTML = '';
-    return;
-  }
-
-  document.getElementById('n8n-logs-body').innerHTML = slice.map(l => {
-    const status = (l.status || 'unknown').toLowerCase();
-    const badgeClass = { sucesso: 'success', erro: 'error', parcial: 'pending' }[status] || 'unknown';
-    const badgeLabel = { sucesso: 'Sucesso', erro: 'Erro', parcial: 'Parcial' }[status] || status || '—';
-    const data_hora = l.criado_em ? new Date(l.criado_em).toLocaleString('pt-BR') : '—';
-    const durLabel = l.duracao_ms != null
-      ? (l.duracao_ms >= 1000 ? (l.duracao_ms / 1000).toFixed(1) + 's' : l.duracao_ms + 'ms')
-      : '—';
-    const erroColor = (l.erros || 0) > 0 ? 'color:var(--accent4)' : '';
-    return `<tr>
-      <td class="highlight">${data_hora}</td>
-      <td style="color:var(--text)">${l.workflow || '—'}</td>
-      <td><span class="meta-badge ${badgeClass}">${badgeLabel}</span></td>
-      <td class="num">${(l.linhas_processadas || 0).toLocaleString('pt-BR')}</td>
-      <td class="num" style="color:var(--accent2)">${(l.linhas_atualizadas || 0).toLocaleString('pt-BR')}</td>
-      <td class="num" style="${erroColor}">${(l.erros || 0).toLocaleString('pt-BR')}</td>
-      <td class="num" style="color:var(--text3)">${durLabel}</td>
-    </tr>`;
+  const start=(n8nLogsPage-1)*N8N_LOGS_PER_PAGE, slice=data.slice(start,start+N8N_LOGS_PER_PAGE);
+  if (!slice.length) { document.getElementById('n8n-logs-body').innerHTML='<tr><td colspan="7" class="empty">Nenhuma execução registrada ainda.</td></tr>'; document.getElementById('n8n-logs-pagination').innerHTML=''; return; }
+  document.getElementById('n8n-logs-body').innerHTML=slice.map(l=>{
+    const status=(l.status||'unknown').toLowerCase();
+    const badgeClass={sucesso:'success',erro:'error',parcial:'pending'}[status]||'unknown';
+    const badgeLabel={sucesso:'Sucesso',erro:'Erro',parcial:'Parcial'}[status]||status||'—';
+    const data_hora=l.criado_em?new Date(l.criado_em).toLocaleString('pt-BR'):'—';
+    const durLabel=l.duracao_ms!=null?(l.duracao_ms>=1000?(l.duracao_ms/1000).toFixed(1)+'s':l.duracao_ms+'ms'):'—';
+    return `<tr><td class="highlight">${data_hora}</td><td style="color:var(--text)">${l.workflow||'—'}</td><td><span class="meta-badge ${badgeClass}">${badgeLabel}</span></td><td class="num">${(l.linhas_processadas||0).toLocaleString('pt-BR')}</td><td class="num" style="color:var(--accent2)">${(l.linhas_atualizadas||0).toLocaleString('pt-BR')}</td><td class="num" style="${(l.erros||0)>0?'color:var(--accent4)':''}">${(l.erros||0).toLocaleString('pt-BR')}</td><td class="num" style="color:var(--text3)">${durLabel}</td></tr>`;
   }).join('');
-
-  // Paginação
-  const pg = document.getElementById('n8n-logs-pagination');
-  if (totalPages <= 1) { pg.innerHTML = ''; return; }
-  let html = `<button class="pg-btn" onclick="n8nLogsGoPage(${n8nLogsPage-1})" ${n8nLogsPage===1?'disabled':''}>‹</button>`;
-  const range = 2;
-  for (let p = 1; p <= totalPages; p++) {
-    if (p === 1 || p === totalPages || (p >= n8nLogsPage - range && p <= n8nLogsPage + range)) {
-      html += `<button class="pg-btn ${p===n8nLogsPage?'active':''}" onclick="n8nLogsGoPage(${p})">${p}</button>`;
-    } else if (p === n8nLogsPage - range - 1 || p === n8nLogsPage + range + 1) {
-      html += `<span style="color:var(--text3);padding:0 2px;font-family:var(--mono);font-size:11px">…</span>`;
-    }
+  const pg=document.getElementById('n8n-logs-pagination');
+  if (totalPages<=1){pg.innerHTML='';return;}
+  let html=`<button class="pg-btn" onclick="n8nLogsGoPage(${n8nLogsPage-1})" ${n8nLogsPage===1?'disabled':''}>‹</button>`;
+  for (let p=1;p<=totalPages;p++){
+    if(p===1||p===totalPages||(p>=n8nLogsPage-2&&p<=n8nLogsPage+2)) html+=`<button class="pg-btn ${p===n8nLogsPage?'active':''}" onclick="n8nLogsGoPage(${p})">${p}</button>`;
+    else if(p===n8nLogsPage-3||p===n8nLogsPage+3) html+=`<span style="color:var(--text3);padding:0 2px;font-family:var(--mono);font-size:11px">…</span>`;
   }
-  html += `<button class="pg-btn" onclick="n8nLogsGoPage(${n8nLogsPage+1})" ${n8nLogsPage===totalPages?'disabled':''}>›</button>`;
-  html += `<span class="pg-info">${total} registros</span>`;
-  pg.innerHTML = html;
+  html+=`<button class="pg-btn" onclick="n8nLogsGoPage(${n8nLogsPage+1})" ${n8nLogsPage===totalPages?'disabled':''}>›</button><span class="pg-info">${total} registros</span>`;
+  pg.innerHTML=html;
 }
-
 function n8nLogsGoPage(p) {
-  n8nLogsPage = p;
-  const status = document.getElementById('n8n-filter-status').value.toLowerCase();
-  const q      = document.getElementById('n8n-search').value.toLowerCase();
-  const filtered = n8nLogsData.filter(l => {
-    const matchStatus = !status || (l.status || '').toLowerCase() === status;
-    const matchQ = !q || (l.workflow || '').toLowerCase().includes(q);
-    return matchStatus && matchQ;
-  });
-  renderN8nLogsTabela(filtered);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  n8nLogsPage=p;
+  const status=document.getElementById('n8n-filter-status').value.toLowerCase(), q=document.getElementById('n8n-search').value.toLowerCase();
+  renderN8nLogsTabela(n8nLogsData.filter(l=>(!status||(l.status||'').toLowerCase()===status)&&(!q||(l.workflow||'').toLowerCase().includes(q))));
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ─── EXPORTAR LEADS PDF ──────────────────────────────────
+// ─── HELPERS DE EXPORTAÇÃO ───────────────────────────────
+function getExportMeta() {
+  return {
+    camp:     document.getElementById('utm-filter-camp').value    || 'Todas',
+    source:   document.getElementById('utm-filter-source').value  || 'Todos',
+    anuncio:  document.getElementById('utm-filter-anuncio').value || 'Todos',
+    busca:    document.getElementById('utm-search-lead').value    || '',
+    dateFrom: document.getElementById('date-from').value || '',
+    dateTo:   document.getElementById('date-to').value   || '',
+    agora:    new Date().toLocaleString('pt-BR'),
+  };
+}
+
+function formatLeadRow(d) {
+  let dataHora = '-';
+  if (d.data_entrada) {
+    const dt = new Date(d.data_entrada);
+    dataHora = dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  return {
+    dataHora,
+    nome:         d.nome         || '-',
+    status_funil: d.status_funil || '-',
+    utm_source:   d.utm_source   || '-',
+    utm_medium:   d.utm_medium   || '-',
+    utm_campaign: d.utm_campaign || '-',
+    utm_content:  d.utm_content  || '-',
+    utm_term:     d.utm_term     || '-',
+  };
+}
+
+// ─── EXPORTAR PDF ────────────────────────────────────────
 function exportarLeadsPDF() {
   const data = utmLeadsFiltered;
   if (!data || !data.length) { alert('Nenhum lead para exportar.'); return; }
-  const camp    = document.getElementById('utm-filter-camp').value    || 'Todas';
-  const source  = document.getElementById('utm-filter-source').value  || 'Todos';
-  const anuncio = document.getElementById('utm-filter-anuncio').value || 'Todos';
-  const busca   = document.getElementById('utm-search-lead').value    || '';
-  const agora   = new Date().toLocaleString('pt-BR');
+  const { camp, source, anuncio, busca, agora } = getExportMeta();
   const esc = s => (s||'-').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const linhas = data.map(d => {
-    let dataHora = '-';
-    if (d.data_entrada) {
-      const dt = new Date(d.data_entrada);
-      dataHora = dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    }
-    return '<tr><td>'+esc(dataHora)+'</td><td>'+esc(d.nome)+'</td><td>'+esc(d.status_funil)+'</td><td>'+esc(d.utm_source)+'</td><td>'+esc(d.utm_medium)+'</td><td>'+esc(d.utm_campaign)+'</td><td>'+esc(d.utm_content)+'</td><td>'+esc(d.utm_term)+'</td></tr>';
+    const r = formatLeadRow(d);
+    return '<tr><td>'+esc(r.dataHora)+'</td><td>'+esc(r.nome)+'</td><td>'+esc(r.status_funil)+'</td><td>'+esc(r.utm_source)+'</td><td>'+esc(r.utm_medium)+'</td><td>'+esc(r.utm_campaign)+'</td><td>'+esc(r.utm_content)+'</td><td>'+esc(r.utm_term)+'</td></tr>';
   }).join('');
   const filtrosAtivos = [
     camp    !== 'Todas' ? 'Campanha: <b>'+camp+'</b>'   : '',
@@ -1337,11 +1128,65 @@ function exportarLeadsPDF() {
     '<div class="total">'+data.length+' leads</div>',
   ].join('');
   const s = '<scri'+'pt>window.onload=()=>window.print()<'+'/scri'+'pt>';
-  const htmlPDF = p + s + '</'+'body></'+'html>';
   const win = window.open('','_blank');
   if (!win) { alert('Permita pop-ups para exportar o PDF.'); return; }
-  win.document.write(htmlPDF);
+  win.document.write(p + s + '</'+'body></'+'html>');
   win.document.close();
+}
+
+// ─── EXPORTAR XLSX ───────────────────────────────────────
+function exportarLeadsXLSX() {
+  const data = utmLeadsFiltered;
+  if (!data || !data.length) { alert('Nenhum lead para exportar.'); return; }
+
+  const { camp, source, anuncio, busca, dateFrom, dateTo, agora } = getExportMeta();
+
+  const cabecalho = ['Data / Hora', 'Nome', 'Etapa', 'Source', 'Medium', 'Campaign', 'Content', 'Term'];
+  const linhas = data.map(d => {
+    const r = formatLeadRow(d);
+    return [r.dataHora, r.nome, r.status_funil, r.utm_source, r.utm_medium, r.utm_campaign, r.utm_content, r.utm_term];
+  });
+  const wsLeads = XLSX.utils.aoa_to_sheet([cabecalho, ...linhas]);
+  wsLeads['!cols'] = [{wch:20},{wch:28},{wch:18},{wch:12},{wch:12},{wch:36},{wch:36},{wch:36}];
+
+  const porSource = {}, porCamp = {};
+  for (const d of data) {
+    const s = d.utm_source   || '(direto)';
+    const c = d.utm_campaign || '(sem campanha)';
+    porSource[s] = (porSource[s] || 0) + 1;
+    if (!porCamp[c]) porCamp[c] = { total: 0, franqueados: 0, parceiros: 0 };
+    porCamp[c].total++;
+    if (d.status_funil === 'Parceiro Help') porCamp[c].parceiros++;
+    else porCamp[c].franqueados++;
+  }
+
+  const resumoData = [
+    ['Leads Individuais — UTMs'],
+    ['Exportado em', agora],
+    ['Período', dateFrom && dateTo ? `${dateFrom} até ${dateTo}` : '—'],
+    ['Total de leads', data.length],
+    [],
+    ['Filtros'],
+    ['Campanha', camp], ['Source', source], ['Anúncio (Content)', anuncio], ['Busca por nome', busca || '—'],
+    [],
+    ['Por Source', 'Leads'],
+    ...Object.entries(porSource).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k, v]),
+    [],
+    ['Por Campanha', 'Total', 'Franqueados', 'Parceiros'],
+    ...Object.entries(porCamp).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>[k, v.total, v.franqueados, v.parceiros]),
+  ];
+  const wsResumo = XLSX.utils.aoa_to_sheet(resumoData);
+  wsResumo['!cols'] = [{wch:36},{wch:14},{wch:14},{wch:14}];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, wsLeads,  'Leads');
+  XLSX.utils.book_append_sheet(wb, wsResumo, 'Resumo');
+
+  const slug = dateFrom && dateTo
+    ? `leads_utm_${dateFrom}_a_${dateTo}`
+    : `leads_utm_${new Date().toISOString().slice(0,10)}`;
+
+  XLSX.writeFile(wb, `${slug}.xlsx`);
 }
 
 </script>
