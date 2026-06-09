@@ -784,6 +784,42 @@ body.light .utm-steps { background: rgba(255,255,255,0.65); }
   .utm-tip-actions { justify-content: stretch; }
   .utm-tip-btn { flex: 1 1 100%; min-width: 0; }
 }
+
+/* UTM */
+#utm-anuncios-body td,
+#utm-camp-body td{
+  vertical-align: top;
+}
+
+#utm-anuncios-body td:nth-child(1){
+  width: 40%;
+}
+
+#utm-anuncios-body td:nth-child(2){
+  width: 25%;
+}
+
+#utm-camp-body td:nth-child(1){
+  width: 45%;
+}
+
+.utm-ad-cell{
+  min-width: 420px;
+  max-width: 650px;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
+.utm-campaign-cell{
+  min-width: 320px;
+  max-width: 500px;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
 </style>
 </head>
 <body>
@@ -1632,7 +1668,7 @@ function renderUTMs(data) {
 }
 function renderUTMCampTabela(campArr,total) {
   document.getElementById('utm-camp-body').innerHTML=campArr.map(([k,v])=>`<tr>
-    <td style="color:var(--accent3);max-width:200px;white-space:normal;word-break:break-word">${k}</td>
+    <td class="utm-campaign-cell">${k}</td>
     <td>${v.source}</td><td>${v.medium}</td>
     <td class="num highlight">${v.leads}</td>
     <td class="num" style="color:var(--accent2)">${v.franqueados}</td>
@@ -1672,7 +1708,7 @@ function renderUTMTipoCharts(data) {
   chartInstances['utm-parceiro']=new Chart(document.getElementById('chart-utm-parceiro'),{type:'bar',data:{labels:top8p.map(([k])=>k.length>20?k.slice(0,20)+'…':k),datasets:[{data:top8p.map(([,v])=>v.parceiros),backgroundColor:'rgba(108,99,255,0.4)',borderColor:'#6c63ff',borderWidth:1}]},options:{...baseOpts,indexAxis:'y',scales:{x:{ticks:{color:'#555570',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#8888aa',font:{size:9}},grid:{display:false}}}}});
   const el=document.getElementById('utm-anuncios-body');
   if (el) el.innerHTML=anuncioArr.sort((a,b)=>(b[1].franqueados+b[1].parceiros)-(a[1].franqueados+a[1].parceiros)).map(([k,v])=>`<tr>
-    <td class="${k!=='(sem anúncio)'?'has-ad-preview':''}" ${k!=='(sem anúncio)'?`data-ad="${esc(k)}" data-camp="${esc(v.campaign)}" data-src="${esc(v.source||'-')}" data-med="${esc(v.medium||'-')}" data-term="${esc(v.term)}" title="Clique para carregar a prévia do anúncio"`:''} style="white-space:normal;word-break:break-word;max-width:200px;color:var(--text)">${k}</td>
+    <td class="${k!=='(sem anúncio)'?'has-ad-preview':''}" ${k!=='(sem anúncio)'?`data-ad="${esc(k)}" data-camp="${esc(v.campaign)}" data-src="${esc(v.source||'-')}" data-med="${esc(v.medium||'-')}" data-term="${esc(v.term)}" title="Clique para carregar a prévia do anúncio"`:''}>${k}</td>
     <td style="white-space:normal;word-break:break-word;max-width:160px;color:var(--accent3)">${v.campaign}</td>
     <td style="color:var(--text2)">${v.term}</td>
     <td class="num highlight">${v.franqueados+v.parceiros}</td>
